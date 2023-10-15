@@ -1,0 +1,5 @@
+---
+# ansible collections (with version/branch) used in this playbook
+# run ansible-galaxy install --force -r requirements.yml to upgrade
+collections:
+  - name: community.general

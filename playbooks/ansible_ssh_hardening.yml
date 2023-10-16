@@ -1,0 +1,27 @@
+---
+- name: Ansible SSH User Setup and Access Control
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Check if connection is possible
+      command: ssh -o User={{ ansible_user }}asdg -o ConnectTimeout=10 -o PreferredAuthentications=publickey -o PubkeyAuthentication=yes {{ ansible_host }} echo "Ok"
+      register: ssh_check
+      connection: local
+      ignore_errors: true
+      changed_when: false
+
+    - name: If no connection, change username
+      connection: local
+      set_fact:
+        ansible_user: root
+        ansible_become_pass: "{{ lookup('community.general.onepassword', inventory_hostname, vault=onepassword_vault, field='password' ) }}"
+      when: ssh_check.rc != 0
+
+    - name: Echo a message from the server
+      ansible.builtin.command: echo "Hello from {{ inventory_hostname }}"
+      register: echo_response
+      changed_when: false
+
+    - name: Debug
+      debug:
+        msg: "Ansible user is {{ ansible_user }}"

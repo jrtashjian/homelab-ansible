@@ -3,3 +3,8 @@ all:
   hosts:
     localhost:
       ansible_connection: local
+  children:
+    proxmox:
+      hosts:
+        pve-node02:
+          ansible_host: 192.168.10.12

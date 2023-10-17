@@ -1,0 +1,33 @@
+---
+- name: Remove pve enterprise repository
+  ansible.builtin.file:
+    path: /etc/apt/sources.list.d/pve-enterprise.list
+    state: absent
+
+- name: Remove ceph enterprise repository
+  ansible.builtin.file:
+    path: /etc/apt/sources.list.d/ceph.list
+    state: absent
+
+- name: Add pve no-subscription repository
+  ansible.builtin.apt_repository:
+    repo: deb http://download.proxmox.com/debian/pve {{ ansible_facts.distribution_release }} pve-no-subscription
+    filename: pve-no-subscription
+    state: present
+  notify: update apt cache
+
+- name: Add ceph no-subscription repository
+  ansible.builtin.apt_repository:
+    repo: deb http://download.proxmox.com/debian/ceph-quincy {{ ansible_facts.distribution_release }} no-subscription
+    filename: ceph-no-subscription
+    state: present
+  notify: update apt cache
+
+# credit: https://johnscs.com/remove-proxmox51-subscription-notice/
+- name: Remove subscription nag message
+  ansible.builtin.replace:
+    path: /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
+    regexp: '(Ext\.Msg\.show\(\{\s+title\: gettext\(.No valid subscription)'
+    replace: 'void({ //\g<1>'
+    backup: yes
+  notify: restart pveproxy

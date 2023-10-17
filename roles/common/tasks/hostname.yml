@@ -1,0 +1,23 @@
+---
+- name: Get the current hostname
+  ansible.builtin.command: hostname
+  register: current_hostname
+  changed_when: false
+  ignore_errors: true
+
+- name: Set hostname to inventory hostname if not set properly
+  ansible.builtin.hostname:
+    name: "{{ inventory_hostname_short }}"
+  when: current_hostname.stdout != inventory_hostname_short
+
+- name: Update /etc/hosts with new hostname entry
+  ansible.builtin.lineinfile:
+    dest: "/etc/hosts"
+    line: "{{ item }} {{ inventory_hostname }} {{ inventory_hostname_short }}"
+    regexp: "^{{ item }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - "127.0.1.1"
+    - "{{ ansible_default_ipv4.address }}"

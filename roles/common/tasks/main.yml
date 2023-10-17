@@ -1,3 +1,18 @@
 ---
 - import_tasks: hostname.yml
   become: true
+
+- ansible.builtin.apt:
+    state: present
+    package:
+      # Ensure HTTPS APT sources support
+      - apt-transport-https
+      - ca-certificates
+      # Enable auto-updates and notifications
+      - unattended-upgrades
+      - apt-listchanges
+      # Misc tools
+      - curl
+      - wget
+      - htop
+      - vim

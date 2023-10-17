@@ -34,13 +34,16 @@ logout
 
 ```bash
 # Fetch the private key from 1Password and store it in a cache directory
-op read "op://homelab/ansible-ssh/private key" -o ./cache/ansible_ed25519
+op read "op://homelab/ansible-ssh/private key?ssh-format=openssh" -o ~/.ssh/ansible_ed25519
+
+# Remove carriage-return characters which 1Password seems to output.
+sed -i 's/\r//' ~/.ssh/ansible_ed25519
 
 # Fetch the public key from 1Password and store it in a cache directory
-op read "op://homelab/ansible-ssh/public key" -o ./cache/ansible_ed25519.pub
+op read "op://homelab/ansible-ssh/public key" -o ~/.ssh/ansible_ed25519.pub
 
 # Copy the public key to the remote server's authorized_keys file for SSH key-based authentication
-ssh-copy-id -i ./cache/ansible_ed25519.pub ansible@123.123.123.123
+ssh-copy-id -i ~/.ssh/ansible_ed25519.pub ansible@123.123.123.123
 ```
 
 ## Ansible Vaults

@@ -1,0 +1,14 @@
+- name: Ensure Proxmox firewall directory exists
+  ansible.builtin.file:
+    path: /etc/pve/firewall
+    state: directory
+
+- name: Ensure Proxmox firewall configuration file exists
+  ansible.builtin.file:
+    path: /etc/pve/firewall/cluster.fw
+    state: touch
+
+- name: Copy firewall rules configuration
+  ansible.builtin.copy:
+    src: etc/pve/firewall/cluster.fw
+    dest: /etc/pve/firewall/cluster.fw

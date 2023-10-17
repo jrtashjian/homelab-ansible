@@ -1,0 +1,23 @@
+[OPTIONS]
+enable: 1
+policy_in: DROP
+policy_out: ACCEPT
+
+[ALIASES]
+LAN 192.168.10.0/24
+OPT1 192.168.20.0/24
+OPT2 192.168.30.0/24
+
+[RULES]
+GROUP proxmox -i vmbr0
+
+[GROUP proxmox] # Proxmox node common rules
+IN ACCEPT -p tcp -dport 8006 -log nolog # Proxmox VE Admin
+
+[GROUP nfs-server] # NFS Server
+IN ACCEPT -p tcp -dport 111,2049,32764:32769 -log nolog
+IN ACCEPT -p udp -dport 111,2049,32764:32769 -log nolog
+
+[GROUP ssh-server] # SSH server rules
+IN SSH(ACCEPT) -source LAN -log nolog
+IN SSH(DROP) -log nolog

@@ -1,3 +1,6 @@
 ---
 - import_tasks: no-subscription.yml
   become: true
+
+- import_tasks: firewall.yml
+  become: true

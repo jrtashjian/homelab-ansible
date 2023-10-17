@@ -1,0 +1,3 @@
+---
+proxmox_kvm_defaults:
+proxmox_kvm: []

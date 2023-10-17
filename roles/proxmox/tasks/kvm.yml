@@ -1,0 +1,32 @@
+---
+- name: Gathering existing VMs
+  ansible.builtin.shell: pvesh get /cluster/resources -type vm --noborder | awk 'NR>1 {print $13}'
+  register: pve_vms
+  changed_when: false
+
+- name: Download Cloud-Init images
+  ansible.builtin.get_url:
+    url: "{{ item.value.cloudimg_url | default(proxmox_kvm_defaults.cloudimg_url) }}"
+    dest: "/home/ansible/{{ item.value.cloudimg | default(proxmox_kvm_defaults.cloudimg) }}"
+    checksum: "{{ item.value.cloudimg_checksum | default(proxmox_kvm_defaults.cloudimg_checksum) }}"
+  with_dict: "{{ proxmox_kvm }}"
+  when: "proxmox_kvm | length > 0"
+
+- name: Prepare Cloud-Init templates
+  become: true
+  ansible.builtin.shell: >
+    VMID="{{ item.value.vmid | default('$(pvesh get /cluster/nextid)') }}";
+
+    qm create $VMID
+    --name "{{ item.key }}"
+    --scsi0 "{{ item.value.storage | default(proxmox_kvm_defaults.storage) }}":0,import-from=/home/ansible/"{{ item.value.cloudimg | default(proxmox_kvm_defaults.cloudimg) }}",discard=on
+    --ide2 "{{ item.value.storage | default(proxmox_kvm_defaults.storage) }}":cloudinit
+    --ostype l26
+    --scsihw virtio-scsi-pci
+    --serial0 socket
+    --vga serial0
+    --boot order=scsi0
+
+    qm template $VMID
+  with_dict: "{{ proxmox_kvm }}"
+  when: "proxmox_kvm | length > 0 and item.key not in pve_vms.stdout_lines"

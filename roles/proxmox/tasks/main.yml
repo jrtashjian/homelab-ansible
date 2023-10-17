@@ -4,3 +4,7 @@
 
 - import_tasks: firewall.yml
   become: true
+
+- import_tasks: kvm.yml
+  become: true
+  tags: kvm

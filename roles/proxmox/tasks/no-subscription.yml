@@ -27,7 +27,7 @@
 - name: Remove subscription nag message
   ansible.builtin.replace:
     path: /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
-    regexp: '(Ext\.Msg\.show\(\{\s+title\: gettext\(.No valid subscription)'
-    replace: 'void({ //\g<1>'
+    regexp: '(\s+)(Ext\.Msg\.show\(\{\s+title\: gettext\(.No valid subscription)'
+    replace: '\g<1>void({ //\g<2>'
     backup: yes
   notify: restart pveproxy

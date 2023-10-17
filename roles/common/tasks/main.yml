@@ -2,7 +2,9 @@
 - import_tasks: hostname.yml
   become: true
 
-- ansible.builtin.apt:
+- name: APT package management configuration
+  become: true
+  ansible.builtin.apt:
     state: present
     package:
       # Ensure HTTPS APT sources support

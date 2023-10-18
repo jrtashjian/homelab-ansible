@@ -1,5 +1,0 @@
----
-proxmox_kvm:
-  debian-12-kvm:
-    ciuser: "{{ ansible_user }}"
-    cipassword: "{{ ansible_become_pass }}"

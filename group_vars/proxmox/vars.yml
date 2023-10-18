@@ -3,7 +3,12 @@ proxmox_kvm_defaults:
   cloudimg_checksum: "sha512:6b55e88b027c14da1b55c85a25a9f7069d4560a8fdb2d948c986a585db469728a06d2c528303e34bb62d8b2984def38fd9ddfc00965846ff6e05b01d6e883bfe"
   cloudimg_url: "http://cloud.debian.org/images/cloud/bookworm/latest/debian-12-genericcloud-amd64.qcow2"
   cloudimg: "debian-12-genericcloud-amd64.qcow2"
+  ciuser: "{{ ansible_user }}"
+  cipassword: "{{ ansible_become_pass }}"
   sshkeys: "/home/{{ ansible_user }}/.ssh/authorized_keys"
   storage: local-zfs
   cores: 2
   memory: 2048
+
+proxmox_kvm:
+  cloudinit-debian-12:

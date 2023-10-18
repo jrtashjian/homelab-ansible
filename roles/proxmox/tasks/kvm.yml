@@ -25,6 +25,9 @@
     --serial0 socket
     --vga serial0
     --boot order=scsi0
+    --ciuser "{{ item.value.ciuser | default(proxmox_kvm_defaults.ciuser | default(omit)) }}"
+    --cipassword "{{ item.value.cipassword | default(proxmox_kvm_defaults.cipassword | default(omit)) }}"
+    --sshkeys "{{ item.value.sshkeys | default(proxmox_kvm_defaults.sshkeys | default(omit)) }}"
 
     qm template $VMID
   with_dict: "{{ proxmox_kvm }}"

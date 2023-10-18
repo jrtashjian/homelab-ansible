@@ -18,10 +18,10 @@
 
     qm create $VMID
     --name "{{ item.key }}"
-    --scsi0 "{{ item.value.storage | default(proxmox_kvm_defaults.storage) }}":0,import-from=/home/ansible/"{{ item.value.cloudimg | default(proxmox_kvm_defaults.cloudimg) }}",discard=on
+    --scsi0 "{{ item.value.storage | default(proxmox_kvm_defaults.storage) }}":0,import-from=/home/ansible/"{{ item.value.cloudimg | default(proxmox_kvm_defaults.cloudimg) }}",discard=on,iothread=1
     --ide2 "{{ item.value.storage | default(proxmox_kvm_defaults.storage) }}":cloudinit
     --ostype l26
-    --scsihw virtio-scsi-pci
+    --scsihw virtio-scsi-single
     --serial0 socket
     --vga serial0
     --boot order=scsi0

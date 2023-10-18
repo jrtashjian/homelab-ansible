@@ -13,7 +13,6 @@
   when: "proxmox_kvm | length > 0"
 
 - name: Prepare Cloud-Init templates
-  become: true
   ansible.builtin.shell: >
     VMID="{{ item.value.vmid | default('$(pvesh get /cluster/nextid)') }}";
 

@@ -1,0 +1,47 @@
+- name: Install required dependencies.
+  become: true
+  ansible.builtin.apt:
+    name:
+      - ca-certificates
+      - curl
+      - gnupg
+      - lsb-release
+    state: present
+
+- name: Import Docker GPG key.
+  become: true
+  ansible.builtin.apt_key:
+    url: https://download.docker.com/linux/debian/gpg
+    state: present
+
+- name: Add Docker package source.
+  become: true
+  ansible.builtin.apt_repository:
+    repo: deb https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable
+    state: present
+    update_cache: true
+
+- name: Install Docker components.
+  become: true
+  ansible.builtin.apt:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+    state: present
+
+- name: Enable Docker service at boot.
+  become: true
+  ansible.builtin.service:
+    name: docker
+    state: started
+    enabled: true
+
+- name: Ensure ansible user has Docker privileges.
+  become: true
+  ansible.builtin.user:
+    append: yes
+    groups: "docker"
+    name: "{{ ansible_user }}"

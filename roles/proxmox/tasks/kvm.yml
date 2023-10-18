@@ -28,6 +28,11 @@
     --ciuser "{{ item.value.ciuser | default(proxmox_kvm_defaults.ciuser | default(omit)) }}"
     --cipassword "{{ item.value.cipassword | default(proxmox_kvm_defaults.cipassword | default(omit)) }}"
     --sshkeys "{{ item.value.sshkeys | default(proxmox_kvm_defaults.sshkeys | default(omit)) }}"
+    --cpu x86-64-v2-AES
+    --cores "{{ item.value.cores | default(proxmox_kvm_defaults.cores | default(omit)) }}"
+    --memory "{{ item.value.memory | default(proxmox_kvm_defaults.memory | default(omit)) }}"
+    --net0 virtio,bridge=vmbr0,firewall=1
+    --ipconfig0 ip=dhcp
 
     qm template $VMID
   with_dict: "{{ proxmox_kvm }}"

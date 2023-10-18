@@ -5,3 +5,5 @@ proxmox_kvm_defaults:
   cloudimg: "debian-12-genericcloud-amd64.qcow2"
   sshkeys: "/home/{{ ansible_user }}/.ssh/authorized_keys"
   storage: local-zfs
+  cores: 2
+  memory: 2048

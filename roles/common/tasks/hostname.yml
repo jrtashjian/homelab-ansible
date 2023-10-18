@@ -1,4 +1,3 @@
----
 - name: Get the current hostname
   ansible.builtin.command: hostname
   register: current_hostname

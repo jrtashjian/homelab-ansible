@@ -1,4 +1,11 @@
 ---
+- name: Ensure libguestfs-tools are available
+  become: true
+  ansible.builtin.apt:
+    state: present
+    package:
+      - libguestfs-tools
+
 - name: Gathering existing VMs
   ansible.builtin.shell: pvesh get /cluster/resources -type vm --noborder | awk 'NR>1 {print $13}'
   register: pve_vms
@@ -9,6 +16,11 @@
     url: "{{ item.value.cloudimg_url | default(proxmox_kvm_defaults.cloudimg_url) }}"
     dest: "/home/ansible/{{ item.value.cloudimg | default(proxmox_kvm_defaults.cloudimg) }}"
     checksum: "{{ item.value.cloudimg_checksum | default(proxmox_kvm_defaults.cloudimg_checksum) }}"
+  with_dict: "{{ proxmox_kvm }}"
+  when: "proxmox_kvm | length > 0"
+
+- name: Ensure QEMU Guest Agent in Cloud-Init images
+  ansible.builtin.shell: "virt-customize -a /home/ansible/{{ item.value.cloudimg | default(proxmox_kvm_defaults.cloudimg) }} --install qemu-guest-agent"
   with_dict: "{{ proxmox_kvm }}"
   when: "proxmox_kvm | length > 0"
 
@@ -25,6 +37,7 @@
     --serial0 socket
     --vga serial0
     --boot order=scsi0
+    --agent 1
     --ciuser "{{ item.value.ciuser | default(proxmox_kvm_defaults.ciuser | default(omit)) }}"
     --cipassword "{{ item.value.cipassword | default(proxmox_kvm_defaults.cipassword | default(omit)) }}"
     --sshkeys "{{ item.value.sshkeys | default(proxmox_kvm_defaults.sshkeys | default(omit)) }}"

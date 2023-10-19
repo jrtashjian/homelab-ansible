@@ -1,0 +1,9 @@
+- name: Add Terraform role
+  ansible.builtin.shell: pveum role add Terraform -privs "Datastore.AllocateSpace Datastore.Audit Pool.Allocate Sys.Audit Sys.Console Sys.Modify VM.Allocate VM.Audit VM.Clone VM.Config.CDROM VM.Config.Cloudinit VM.Config.CPU VM.Config.Disk VM.Config.HWType VM.Config.Memory VM.Config.Network VM.Config.Options VM.Migrate VM.Monitor VM.PowerMgmt"
+
+- name: Add Terraform user
+  ansible.builtin.shell: pveum user add {{ terraform_user }} --password {{ terraform_pass }}
+  no_log: true
+
+- name: Assign Terraform role to the user
+  ansible.builtin.shell: pveum aclmod / -user {{ terraform_user }} -role Terraform

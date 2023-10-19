@@ -4,6 +4,9 @@
 - import_tasks: firewall.yml
   become: true
 
+- import_tasks: terraform.yml
+  become: true
+
 - import_tasks: kvm.yml
   become: true
   tags: [ never, kvm ]

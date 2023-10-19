@@ -39,4 +39,5 @@ sudo -u $SUDO_USER op read "op://homelab/ansible-user/Credentials/.ansible-vault
 sudo -u $SUDO_USER ansible-galaxy install -r requirements.yml
 
 # Run ansible playbook to fetch and encrypt secrets
-sudo -u $SUDO_USER ansible-playbook playbooks/fetch_and_encrypt_secrets.yml
+sudo -u $SUDO_USER op inject -i group_vars/all/vault.yml.example -o group_vars/all/vault.yml --force
+sudo -u $SUDO_USER ansible-vault encrypt group_vars/all/vault.yml

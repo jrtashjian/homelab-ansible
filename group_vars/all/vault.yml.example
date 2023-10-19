@@ -1,0 +1,6 @@
+ansible_become_pass: {{ op://homelab/ansible-user/password }}
+ansible_public_key: {{ op://homelab/ansible-ssh/public key }}
+ansible_user: {{ op://homelab/ansible-user/username }}
+
+terraform_user: {{ op://homelab/terraform-user/username }}
+terraform_pass: {{ op://homelab/terraform-user/password }}

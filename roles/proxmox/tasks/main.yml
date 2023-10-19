@@ -6,4 +6,4 @@
 
 - import_tasks: kvm.yml
   become: true
-  tags: kvm
+  tags: [ never, kvm ]

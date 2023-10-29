@@ -34,6 +34,15 @@ resource "proxmox_vm_qemu" "docker" {
   cipassword = var.ANSIBLE_PASS
   sshkeys    = var.ANSIBLE_PUBLIC_KEY
 
+  vga {
+    type = "serial0"
+  }
+
+  serial {
+    id   = 0
+    type = "socket"
+  }
+
   network {
     bridge   = "vmbr0"
     firewall = true

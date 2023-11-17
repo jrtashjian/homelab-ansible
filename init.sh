@@ -9,6 +9,13 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
+# Check if 'ansible' is already installed
+if ! command -v ansible &> /dev/null
+then
+    apt update
+    apt install -y ansible
+fi
+
 # Check if 'op' command is already installed
 if ! command -v op &> /dev/null
 then

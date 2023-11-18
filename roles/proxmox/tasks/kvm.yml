@@ -21,7 +21,6 @@
   ansible.builtin.get_url:
     url: "{{ item.value.cloudimg_url | default(proxmox_kvm_defaults.cloudimg_url) }}"
     dest: "/home/ansible/{{ item.value.cloudimg | default(proxmox_kvm_defaults.cloudimg) }}"
-    checksum: "{{ item.value.cloudimg_checksum | default(proxmox_kvm_defaults.cloudimg_checksum) }}"
   with_dict: "{{ proxmox_kvm }}"
   when: "proxmox_kvm | length > 0"
   tags: [ cloudinit-templates ]

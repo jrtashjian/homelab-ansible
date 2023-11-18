@@ -52,6 +52,12 @@ ssh-copy-id -i ~/.ssh/ansible_ed25519.pub ansible@123.123.123.123
 ansible-playbook ./playbooks/homelab.yml
 ```
 
+### Running on Terraform inventory
+
+```bash
+ansible-playbook -i ./inventory-terraform.yml ./playbooks/homelab.yml
+```
+
 ## Running Terraform
 
 ```bash

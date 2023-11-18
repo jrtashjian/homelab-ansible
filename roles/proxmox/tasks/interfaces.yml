@@ -1,5 +1,5 @@
 - name: Gather existing interfaces
-  ansible.builtin.shell: pvesh get "/nodes/{{ inventory_hostname_short }}/network" --noborder --output-format json
+  ansible.builtin.shell: pvesh get "/nodes/{{ inventory_hostname_short }}/network" --output-format json
   register: pve_interfaces_raw
   changed_when: false
 

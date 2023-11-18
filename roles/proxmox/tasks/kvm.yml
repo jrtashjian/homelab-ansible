@@ -28,8 +28,8 @@
 
 - name: Ensure QEMU Guest Agent in Cloud-Init images
   ansible.builtin.shell: |
-    virt-customize -a /home/ansible/{{ item.value.cloudimg | default(proxmox_kvm_defaults.cloudimg) }} --install qemu-guest-agent
-    virt-customize -a /home/ansible/{{ item.value.cloudimg | default(proxmox_kvm_defaults.cloudimg) }} --run-command "truncate -s 0 /etc/machine-id"
+    virt-customize -a /home/ansible/{{ item.value.cloudimg | default(proxmox_kvm_defaults.cloudimg) }} --install qemu-guest-agent,python3
+    virt-customize -a /home/ansible/{{ item.value.cloudimg | default(proxmox_kvm_defaults.cloudimg) }} --truncate /etc/machine-id
   with_dict: "{{ proxmox_kvm }}"
   when: "proxmox_kvm | length > 0"
   tags: [ cloudinit-templates ]

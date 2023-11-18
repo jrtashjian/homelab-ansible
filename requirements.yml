@@ -2,3 +2,4 @@
 # run ansible-galaxy install --force -r requirements.yml to upgrade
 collections:
   - name: community.general
+  - name: cloud.terraform

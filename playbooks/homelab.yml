@@ -2,3 +2,7 @@
   roles:
     - proxmox
     - common
+
+- hosts: docker
+  roles:
+    - docker

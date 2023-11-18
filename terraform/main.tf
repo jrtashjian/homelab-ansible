@@ -4,6 +4,10 @@ terraform {
       source  = "Telmate/proxmox"
       version = "2.9.14"
     }
+    ansible = {
+      source  = "ansible/ansible"
+      version = "1.1.0"
+    }
   }
 }
 
@@ -56,11 +60,16 @@ resource "proxmox_vm_qemu" "docker" {
     discard  = "on"
     iothread = 1
   }
+}
 
-  # Run Ansible tasks on the VM.
-  provisioner "local-exec" {
-    working_dir = "../"
-    # Wait for Clout-Init to finish before running Ansible.
-    command = "sleep 60 && ANSIBLE_HOST_KEY_CHECKING=false ansible-playbook -u ${self.ciuser} -i '${self.ssh_host},' --private-key ~/.ssh/ansible_ed25519 -e 'pub_key=${var.ANSIBLE_PUBLIC_KEY}' playbooks/docker-install.yml"
+# Add the VMs to the Ansible inventory.
+resource "ansible_host" "docker" {
+  count = 4
+
+  name   = proxmox_vm_qemu.docker[count.index].name
+  groups = ["docker"]
+
+  variables = {
+    ansible_host = proxmox_vm_qemu.docker[count.index].ssh_host
   }
 }

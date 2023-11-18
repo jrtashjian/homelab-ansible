@@ -14,7 +14,7 @@ provider "proxmox" {
 resource "proxmox_vm_qemu" "docker" {
   count = 4
 
-  name        = "docker0${count.index + 1}"
+  name        = format("docker%02d", count.index + 1)
   target_node = "pve-node02"
 
   clone   = "cloudinit-debian-12"

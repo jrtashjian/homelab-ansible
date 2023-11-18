@@ -46,6 +46,18 @@ op read "op://homelab/ansible-ssh/public key" -o ~/.ssh/ansible_ed25519.pub
 ssh-copy-id -i ~/.ssh/ansible_ed25519.pub ansible@123.123.123.123
 ```
 
+## Running Playbooks
+
+```bash
+ansible-playbook ./playbooks/homelab.yml
+```
+
+## Running Terraform
+
+```bash
+op run --env-file="terraform/.env_vars" -- terraform -chdir=terraform/ plan
+```
+
 ## Ansible Vaults
 
 The Ansible Vault password is securely stored in the `.ansible-vault-password` file, and this file is explicitly excluded from version control by Git.

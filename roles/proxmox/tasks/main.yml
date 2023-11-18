@@ -14,4 +14,5 @@
 
 - import_tasks: kvm.yml
   become: true
+  when: "proxmox_kvm | length > 0"
   tags: [ never, kvm ]

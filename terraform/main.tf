@@ -57,20 +57,6 @@ resource "proxmox_vm_qemu" "docker" {
     iothread = 1
   }
 
-  # Create a new SSH connection to the VM.
-  connection {
-    type        = "ssh"
-    host        = self.ssh_host
-    user        = self.ciuser
-    password    = self.cipassword
-    private_key = file("~/.ssh/ansible_ed25519")
-  }
-
-  # Install Python3 on the VM.
-  provisioner "remote-exec" {
-    inline = ["sudo apt update", "sudo apt install -y python3"]
-  }
-
   # Run Ansible tasks on the VM.
   provisioner "local-exec" {
     working_dir = "../"

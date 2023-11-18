@@ -60,6 +60,7 @@ resource "proxmox_vm_qemu" "docker" {
   # Run Ansible tasks on the VM.
   provisioner "local-exec" {
     working_dir = "../"
-    command     = "ANSIBLE_HOST_KEY_CHECKING=false ansible all -u ${self.ciuser} -i '${self.ssh_host},' --private-key ~/.ssh/ansible_ed25519 -e 'pub_key=${var.ANSIBLE_PUBLIC_KEY}' -m include_tasks -a 'file=roles/docker/tasks/main.yml'"
+    # Wait for Clout-Init to finish before running Ansible.
+    command = "sleep 60 && ANSIBLE_HOST_KEY_CHECKING=false ansible-playbook -u ${self.ciuser} -i '${self.ssh_host},' --private-key ~/.ssh/ansible_ed25519 -e 'pub_key=${var.ANSIBLE_PUBLIC_KEY}' playbooks/docker-install.yml"
   }
 }

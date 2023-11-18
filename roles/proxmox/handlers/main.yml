@@ -3,3 +3,9 @@
   ansible.builtin.service:
     name: pveproxy
     state: restarted
+
+- name: restart networking
+  become: true
+  ansible.builtin.service:
+    name: pvenetcommit
+    state: restarted

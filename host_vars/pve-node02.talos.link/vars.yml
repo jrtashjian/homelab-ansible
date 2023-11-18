@@ -1,0 +1,6 @@
+proxmox_interfaces:
+  vmbr1:
+    type: bridge
+    cidr: 192.168.30.12/24
+    bridge_ports: eno3
+    autostart: 1

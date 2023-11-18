@@ -1,5 +1,4 @@
 - name: Ensure libguestfs-tools are available
-  become: true
   ansible.builtin.apt:
     state: present
     package:
@@ -7,15 +6,36 @@
 
 - name: Gathering existing VMs
   ansible.builtin.shell: qm list | awk 'NR>1 {print $2}'
-  register: pve_vms
+  register: pve_vms_raw
   changed_when: false
-  tags: [ cloudinit-templates ]
+  tags: [ cloudinit-templates, rebuild-cloudinit-templates ]
+
+- name: Set pve_vms as a list of VM names
+  ansible.builtin.set_fact:
+    pve_vms: "{{ pve_vms_raw.stdout_lines }}"
+  changed_when: false
+  tags: [ cloudinit-templates, rebuild-cloudinit-templates ]
 
 - name: Remove existing Cloud-Init templates
   ansible.builtin.shell: "qm destroy $(qm list | awk '/{{ item.key }}/ {print $1}') --destroy-unreferenced-disk --purge"
   with_dict: "{{ proxmox_kvm }}"
-  when: "proxmox_kvm | length > 0 and item.key in pve_vms.stdout_lines" # Only remove existing VMs
-  tags: [ never, rebuild, cloudinit-templates ]
+  when: "proxmox_kvm | length > 0 and item.key in pve_vms" # Only remove existing VMs
+  tags: [ never, rebuild-cloudinit-templates ]
+
+- name: Delete downloaded Cloud-Init images
+  ansible.builtin.file:
+    path: "/home/ansible/{{ item.value.cloudimg | default(proxmox_kvm_defaults.cloudimg) }}"
+    state: absent
+  with_dict: "{{ proxmox_kvm }}"
+  when: "proxmox_kvm | length > 0 and item.key in pve_vms"
+  tags: [ never, rebuild-cloudinit-templates ]
+
+- name: Update pve_vms to remove destroyed VM keys
+  ansible.builtin.set_fact:
+    pve_vms: "{{ pve_vms | difference([item.key]) }}"
+  with_dict: "{{ proxmox_kvm }}"
+  when: "proxmox_kvm | length > 0 and item.key in pve_vms"
+  tags: [ never, rebuild-cloudinit-templates ]
 
 - name: Download Cloud-Init images
   ansible.builtin.get_url:
@@ -23,7 +43,7 @@
     dest: "/home/ansible/{{ item.value.cloudimg | default(proxmox_kvm_defaults.cloudimg) }}"
   with_dict: "{{ proxmox_kvm }}"
   when: "proxmox_kvm | length > 0"
-  tags: [ cloudinit-templates ]
+  tags: [ cloudinit-templates, rebuild-cloudinit-templates ]
 
 - name: Ensure QEMU Guest Agent in Cloud-Init images
   ansible.builtin.shell: |
@@ -31,7 +51,7 @@
     virt-customize -a /home/ansible/{{ item.value.cloudimg | default(proxmox_kvm_defaults.cloudimg) }} --truncate /etc/machine-id
   with_dict: "{{ proxmox_kvm }}"
   when: "proxmox_kvm | length > 0"
-  tags: [ cloudinit-templates ]
+  tags: [ cloudinit-templates, rebuild-cloudinit-templates ]
 
 - name: Prepare Cloud-Init templates
   ansible.builtin.shell: >
@@ -58,5 +78,5 @@
 
     qm template $VMID
   with_dict: "{{ proxmox_kvm }}"
-  when: "proxmox_kvm | length > 0 and item.key not in pve_vms.stdout_lines" # Only create new VMs
-  tags: [ cloudinit-templates ]
+  when: "proxmox_kvm | length > 0 and item.key not in pve_vms" # Only create new VMs
+  tags: [ cloudinit-templates, rebuild-cloudinit-templates ]

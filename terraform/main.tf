@@ -73,3 +73,77 @@ resource "ansible_host" "docker" {
     ansible_host = proxmox_vm_qemu.docker[count.index].ssh_host
   }
 }
+
+locals {
+  minecraft_lxc = {
+    "proxy" = {
+      cores  = 2
+      memory = 2048
+      hwaddr = "7e:a2:d8:e0:b4:18"
+    }
+    "lobby" = {
+      cores  = 2
+      memory = 2048
+      hwaddr = "9a:77:71:bc:a0:7d"
+    }
+    "main" = {
+      cores  = 8
+      memory = 8192
+      hwaddr = "3e:2c:e3:97:c8:25"
+    }
+    "hardcore" = {
+      cores  = 8
+      memory = 8192
+      hwaddr = "6e:00:94:63:d3:0a"
+    }
+  }
+}
+
+resource "proxmox_lxc" "minecraft" {
+  for_each = local.minecraft_lxc
+
+  hostname    = "minecraft-${each.key}"
+  target_node = "pve-node02"
+
+  ostemplate = "local:vztmpl/debian-12-standard_12.2-1_amd64.tar.zst"
+
+  cores  = each.value.cores
+  memory = each.value.memory
+
+  password        = var.ANSIBLE_PASS
+  ssh_public_keys = var.ANSIBLE_PUBLIC_KEY
+
+  onboot       = true
+  start        = true
+  unprivileged = true
+
+  features {
+    nesting = true
+  }
+
+  network {
+    name     = "eth0"
+    bridge   = "vmbr0"
+    firewall = true
+    ip       = "dhcp"
+    hwaddr   = each.value.hwaddr
+  }
+
+  rootfs {
+    storage = "machines"
+    size    = "10G"
+  }
+}
+
+# Add the LXCs to the Ansible inventory.
+resource "ansible_host" "minecraft" {
+  for_each = local.minecraft_lxc
+
+  name   = proxmox_lxc.minecraft[each.key].hostname
+  groups = ["minecraft"]
+
+  variables = {
+    ansible_ssh_user = "root"
+    ansible_host = proxmox_lxc.minecraft[each.key].hostname
+  }
+}

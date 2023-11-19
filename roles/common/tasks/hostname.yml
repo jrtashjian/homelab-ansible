@@ -20,3 +20,4 @@
   with_items:
     - "127.0.1.1"
     - "{{ ansible_default_ipv4.address }}"
+  when: ansible_default_ipv4.address is defined

@@ -1,4 +1,7 @@
 proxmox_kvm_defaults:
 proxmox_kvm: []
 
+proxmox_lxc_defaults:
+proxmox_lxc: []
+
 proxmox_interfaces: []

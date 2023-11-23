@@ -1,0 +1,35 @@
+- hosts: [ proxmox ]
+  name: Routine Package Upgrades
+  become: true
+
+  tasks:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Upgrade packages
+      ansible.builtin.apt:
+        upgrade: dist
+
+    - name: Remove unused packages
+      ansible.builtin.apt:
+        autoremove: yes
+        autoclean: yes
+        clean: yes
+
+    - name: Check for reboot
+      ansible.builtin.shell: /usr/bin/test -f /var/run/reboot-required
+      register: reboot_required
+      changed_when: false
+      failed_when: false
+
+    - name: Reboot if needed
+      ansible.builtin.reboot:
+        msg: "Reboot initiated by Ansible for package upgrades"
+        connect_timeout: 5
+        reboot_timeout: 300
+        post_reboot_delay: 30
+        pre_reboot_delay: 30
+        reboot_timeout: 300
+      when: reboot_required.rc == 0

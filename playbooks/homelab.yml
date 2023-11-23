@@ -6,3 +6,13 @@
 - hosts: docker
   roles:
     - docker
+
+- hosts: minecraft-proxies
+  roles:
+    - common
+    - minecraft-proxy
+
+- hosts: minecraft-worlds
+  roles:
+    - common
+    - minecraft-papermc

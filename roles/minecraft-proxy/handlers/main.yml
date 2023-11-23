@@ -1,0 +1,12 @@
+- name: start minecraft-proxy
+  become: true
+  service:
+    name: minecraft-proxy
+    state: started
+    enabled: yes
+
+- name: restart minecraft-proxy
+  become: true
+  service:
+    name: minecraft-proxy
+    state: restarted

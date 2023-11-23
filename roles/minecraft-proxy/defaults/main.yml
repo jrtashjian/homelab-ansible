@@ -1,0 +1,16 @@
+jvm_memory: "512M"
+
+# JVM Startup Flags
+jvm_flags:
+  - "-XX:+UseG1GC"
+  - "-XX:G1HeapRegionSize=4M"
+  - "-XX:+UnlockExperimentalVMOptions"
+  - "-XX:+ParallelRefProcEnabled"
+  - "-XX:+AlwaysPreTouch"
+  - "-XX:MaxInlineLevel=15"
+
+# See files/opt/minecraft/config.yml for options.
+config_yml_overrides: []
+
+# See files/opt/minecraft/waterfall.yml for options.
+waterfall_yml_overrides: []

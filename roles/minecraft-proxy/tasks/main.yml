@@ -1,0 +1,105 @@
+- name: install minecraft server requirements
+  become: true
+  apt:
+    state: present
+    update_cache: yes
+    package:
+      - git
+      - build-essential
+      - openjdk-17-jre-headless
+
+- name: add the user 'minecraft'
+  become: true
+  ansible.builtin.user:
+    name: minecraft
+    system: yes
+    home: /opt/minecraft
+    shell: /bin/bash
+
+- name: create plugins directory
+  become: true
+  ansible.builtin.file:
+    path: /opt/minecraft/plugins
+    state: directory
+
+- name: create plugins/floodgate directory
+  become: true
+  ansible.builtin.file:
+    path: /opt/minecraft/plugins/floodgate
+    state: directory
+
+# https://github.com/PaperMC/Waterfall
+- name: Determine latest Waterfall build
+  uri:
+    url: https://papermc.io/api/v2/projects/waterfall/version_group/1.20/builds
+  register: request_waterfall
+
+- name: Download server files
+  become: true
+  get_url:
+    url: "{{ item.url }}"
+    dest: "{{ item.dest }}"
+  loop:
+    - {
+        url: "https://papermc.io/api/v2/projects/waterfall/versions/{{ request_waterfall.json.builds[-1].version }}/builds/{{ request_waterfall.json.builds[-1].build }}/downloads/{{ request_waterfall.json.builds[-1].downloads.application.name }}",
+        dest: /opt/minecraft/waterfall.jar,
+      }
+    - {
+        url: "https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/bungeecord/build/libs/Geyser-BungeeCord.jar",
+        dest: /opt/minecraft/plugins/Geyser.jar,
+      }
+    - {
+        url: "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/bungee/build/libs/floodgate-bungee.jar",
+        dest: /opt/minecraft/plugins/floodgate.jar,
+      }
+    - {
+        url: "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/database/sqlite/build/libs/floodgate-sqlite-database.jar",
+        dest: /opt/minecraft/plugins/floodgate/floodgate-sqlite-database.jar,
+      }
+    - {
+        # https://api.github.com/repos/sekwah41/Advanced-Portals/releases/latest
+        url: "https://github.com/sekwah41/Advanced-Portals/releases/download/v0.9.3/Advanced-Portals-0.9.3.jar",
+        dest: /opt/minecraft/plugins/Advanced-Portals.jar,
+      }
+  notify: restart minecraft-proxy
+  when: not ansible_check_mode
+
+- name: Load base *.yml configurations
+  include_vars:
+    file: "{{ item.file }}"
+    name: "{{ item.name }}"
+  loop:
+    - { name: "base_config_yml", file: files/opt/minecraft/config.yml }
+    - { name: "base_waterfall_yml", file: files/opt/minecraft/waterfall.yml }
+  register: result
+
+- name: Apply overrides to *.yml config files
+  become: true
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  loop:
+    - { src: opt/minecraft/config.yml.j2, dest: /opt/minecraft/config.yml }
+    - {
+        src: opt/minecraft/waterfall.yml.j2,
+        dest: /opt/minecraft/waterfall.yml,
+      }
+  notify: restart minecraft-proxy
+
+- name: Create service
+  become: true
+  template:
+    src: etc/systemd/system/minecraft-proxy.service.j2
+    dest: /etc/systemd/system/minecraft-proxy.service
+    owner: root
+    group: root
+  notify: start minecraft-proxy
+
+- name: give 'minecraft' user ownership
+  become: true
+  ansible.builtin.file:
+    path: /opt/minecraft
+    state: directory
+    recurse: yes
+    owner: minecraft
+    group: minecraft

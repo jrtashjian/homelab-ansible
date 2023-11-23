@@ -1,0 +1,14 @@
+[Unit]
+Description=Minecraft Proxy
+After=network.target
+
+[Service]
+Restart=always
+RestartSec=30
+
+User=minecraft
+WorkingDirectory=/opt/minecraft
+ExecStart=/usr/bin/java {{ jvm_flags | join(" ") }} -Xms{{ jvm_memory }} -Xmx{{ jvm_memory }} -jar waterfall.jar
+
+[Install]
+WantedBy=multi-user.target

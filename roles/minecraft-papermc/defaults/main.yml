@@ -23,3 +23,8 @@ aikar_jvm_flags:
   - "-XX:MaxTenuringThreshold=1"
   - "-Dusing.aikars.flags=https://mcflags.emc.gs"
   - "-Daikars.new.flags=true"
+
+# Example item:
+# - option: "pvp"
+#   value: false
+server_properties: []

@@ -17,3 +17,19 @@
     option: "eula"
     value: "{{ eula_accept }}"
     no_extra_spaces: yes
+
+- name: Copy server.properties
+  ansible.builtin.copy:
+    src: files/opt/minecraft/server.properties
+    dest: /opt/minecraft/server.properties
+
+- name: Override server.properties config for host
+  ansible.builtin.ini_file:
+    path: /opt/minecraft/server.properties
+    section: null
+    option: "{{ item.option }}"
+    value: "{{ item.value }}"
+    no_extra_spaces: yes
+  loop: "{{ server_properties }}"
+  when: "server_properties | length > 0"
+  notify: restart minecraft

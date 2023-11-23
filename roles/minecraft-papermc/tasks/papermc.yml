@@ -27,9 +27,9 @@
   ansible.builtin.ini_file:
     path: /opt/minecraft/server.properties
     section: null
-    option: "{{ item.option }}"
+    option: "{{ item.key }}"
     value: "{{ item.value }}"
     no_extra_spaces: yes
-  loop: "{{ server_properties }}"
+  with_dict: "{{ server_properties }}"
   when: "server_properties | length > 0"
   notify: restart minecraft

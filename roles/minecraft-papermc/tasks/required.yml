@@ -1,0 +1,15 @@
+- name: install minecraft server requirements
+  ansible.builtin.apt:
+    state: present
+    update_cache: yes
+    package:
+      - git
+      - build-essential
+      - openjdk-17-jre-headless
+
+- name: add the user 'minecraft'
+  ansible.builtin.user:
+    name: minecraft
+    system: yes
+    home: /opt/minecraft
+    shell: /bin/bash

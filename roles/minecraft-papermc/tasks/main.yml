@@ -1,0 +1,17 @@
+- import_tasks: required.yml
+  become: true
+
+- import_tasks: papermc.yml
+  become: true
+
+- import_tasks: service.yml
+  become: true
+
+- name: give 'minecraft' user ownership
+  become: true
+  ansible.builtin.file:
+    path: /opt/minecraft
+    state: directory
+    recurse: yes
+    owner: minecraft
+    group: minecraft

@@ -1,0 +1,7 @@
+- name: Create service
+  ansible.builtin.template:
+    src: etc/systemd/system/minecraft.service.j2
+    dest: /etc/systemd/system/minecraft.service
+    owner: root
+    group: root
+  notify: start minecraft

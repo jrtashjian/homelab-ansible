@@ -1,0 +1,19 @@
+# https://github.com/PaperMC/Paper
+- name: Determine latest PaperMC build
+  ansible.builtin.uri:
+    url: https://papermc.io/api/v2/projects/paper/version_group/1.20/builds
+  register: request_papermc
+
+- name: Download server files
+  ansible.builtin.get_url:
+    url: "https://papermc.io/api/v2/projects/paper/versions/{{ request_papermc.json.builds[-1].version }}/builds/{{ request_papermc.json.builds[-1].build }}/downloads/{{ request_papermc.json.builds[-1].downloads.application.name }}"
+    dest: "/opt/minecraft/paper.jar"
+  when: not ansible_check_mode
+
+- name: Update eula.txt
+  ansible.builtin.ini_file:
+    path: /opt/minecraft/eula.txt
+    section: null
+    option: "eula"
+    value: "{{ eula_accept }}"
+    no_extra_spaces: yes

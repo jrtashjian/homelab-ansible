@@ -1,0 +1,12 @@
+- name: start minecraft
+  become: true
+  ansible.builtin.service:
+    name: minecraft
+    state: started
+    enabled: yes
+
+- name: restart minecraft
+  become: true
+  ansible.builtin.service:
+    name: minecraft
+    state: restarted

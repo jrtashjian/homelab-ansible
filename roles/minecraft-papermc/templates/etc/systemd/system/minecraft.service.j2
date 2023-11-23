@@ -1,0 +1,14 @@
+[Unit]
+Description=Minecraft Server
+After=network.target
+
+[Service]
+Restart=always
+RestartSec=30
+
+User=minecraft
+WorkingDirectory=/opt/minecraft
+ExecStart=/usr/bin/java {{ aikar_jvm_flags | join(" ") }} -Xms{{ jvm_memory }} -Xmx{{ jvm_memory }} -jar paper.jar nogui
+
+[Install]
+WantedBy=multi-user.target

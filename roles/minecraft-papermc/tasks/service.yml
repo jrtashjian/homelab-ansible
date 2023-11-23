@@ -1,7 +1,13 @@
-- name: Create service
+- name: Check if service exists
+  ansible.builtin.stat:
+    path: /etc/systemd/system/minecraft.service
+  register: minecraft_service
+
+- name: Create service if it doesn't exist
   ansible.builtin.template:
     src: etc/systemd/system/minecraft.service.j2
     dest: /etc/systemd/system/minecraft.service
     owner: root
     group: root
   notify: start minecraft
+  when: not minecraft_service.stat.exists

@@ -80,21 +80,25 @@ locals {
       cores  = 2
       memory = 2048
       hwaddr = "7e:a2:d8:e0:b4:18"
+      groups = [ "minecraft", "minecraft-proxies" ]
     }
     "lobby" = {
       cores  = 2
       memory = 2048
       hwaddr = "9a:77:71:bc:a0:7d"
+      groups = [ "minecraft", "minecraft-worlds" ]
     }
     "main" = {
       cores  = 8
       memory = 8192
       hwaddr = "3e:2c:e3:97:c8:25"
+      groups = [ "minecraft", "minecraft-worlds" ]
     }
     "hardcore" = {
       cores  = 8
       memory = 8192
       hwaddr = "6e:00:94:63:d3:0a"
+      groups = [ "minecraft", "minecraft-worlds" ]
     }
   }
 }
@@ -140,7 +144,7 @@ resource "ansible_host" "minecraft" {
   for_each = local.minecraft_lxc
 
   name   = proxmox_lxc.minecraft[each.key].hostname
-  groups = ["minecraft"]
+  groups = each.value.groups
 
   variables = {
     ansible_ssh_user = "root"

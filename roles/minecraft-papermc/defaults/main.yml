@@ -27,4 +27,5 @@ aikar_jvm_flags:
 # Example item:
 # - option: "pvp"
 #   value: false
+server_properties_defaults: [] # allows for defaults to be set at the group level and overridden at the host level
 server_properties: []

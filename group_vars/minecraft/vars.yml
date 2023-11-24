@@ -1,0 +1,9 @@
+eula_accept: "true"
+
+server_properties_defaults:
+  broadcast-console-to-ops: "false"
+  broadcast-rcon-to-ops: "false"
+  enable-status: "false" # appear as offline, but still accept connections.
+  hide-online-players: "true" # player list is not sent on status requests.
+  max-players: "15"
+  online-mode: "false" # Prevent checking against Mojang servers.

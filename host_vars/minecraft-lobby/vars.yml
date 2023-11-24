@@ -1,21 +1,13 @@
-eula_accept: "true"
-
 server_properties:
   allow-nether: "false"
-  broadcast-console-to-ops: "false"
-  broadcast-rcon-to-ops: "false"
   difficulty: "peaceful"
-  enable-status: "false" # appear as offline, but still accept connections.
   enforce-secure-profile: "false"
   force-gamemode: "true"
   gamemode: "adventure"
   generate-structures: "false"
-  hide-online-players: "true" # player list is not sent on status requests.
   level-type: "flat"
-  max-players: "15"
   max-world-size: "128"
   motd: "Lobby Server"
-  online-mode: "false" # Prevent checking against Mojang servers.
   pvp: "false"
   simulation-distance: "3"
   spawn-animals: "false"

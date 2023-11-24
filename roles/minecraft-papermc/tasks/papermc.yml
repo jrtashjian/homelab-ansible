@@ -30,6 +30,6 @@
     option: "{{ item.key }}"
     value: "{{ item.value }}"
     no_extra_spaces: yes
-  with_dict: "{{ server_properties }}"
+  with_dict: "{{ server_properties_defaults | combine(server_properties, recursive=True) }}"
   when: "server_properties | length > 0"
   notify: restart minecraft

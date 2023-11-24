@@ -1,4 +1,4 @@
 .ansible-vault-password
 ansible_collections/
 cache/
-group_vars/all/vault.yml
+vault.yml

@@ -31,5 +31,4 @@
         reboot_timeout: 300
         post_reboot_delay: 30
         pre_reboot_delay: 30
-        reboot_timeout: 300
       when: reboot_required.rc == 0

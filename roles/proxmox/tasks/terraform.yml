@@ -1,9 +1,22 @@
+- name: Check if Terraform role exists
+  ansible.builtin.shell: pveum role list | grep Terraform
+  register: terraform_role
+  changed_when: false
+
 - name: Add Terraform role
   ansible.builtin.shell: pveum role add Terraform -privs "Datastore.AllocateSpace Datastore.Audit Pool.Allocate SDN.Use Sys.Audit Sys.Console Sys.Modify VM.Allocate VM.Audit VM.Clone VM.Config.CDROM VM.Config.Cloudinit VM.Config.CPU VM.Config.Disk VM.Config.HWType VM.Config.Memory VM.Config.Network VM.Config.Options VM.Migrate VM.Monitor VM.PowerMgmt"
+  when: terraform_role.stdout == ""
+
+- name: Check if Terraform user exists
+  ansible.builtin.shell: pveum user list | grep {{ terraform_user }}
+  register: terraform_user
+  changed_when: false
 
 - name: Add Terraform user
   ansible.builtin.shell: pveum user add {{ terraform_user }} --password {{ terraform_pass }}
   no_log: true
+  when: terraform_user.stdout == ""
 
 - name: Assign Terraform role to the user
   ansible.builtin.shell: pveum aclmod / -user {{ terraform_user }} -role Terraform
+  when: terraform_user.stdout == ""

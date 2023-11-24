@@ -9,3 +9,12 @@
   ansible.builtin.service:
     name: pvenetcommit
     state: restarted
+
+- name: reboot
+  become: true
+  ansible.builtin.reboot:
+    msg: "Reboot initiated by Ansible for {{ ansible_hostname }}"
+    connect_timeout: 5
+    reboot_timeout: 300
+    post_reboot_delay: 30
+    pre_reboot_delay: 30

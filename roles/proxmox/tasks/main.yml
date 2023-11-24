@@ -1,6 +1,10 @@
 - import_tasks: no-subscription.yml
   become: true
 
+- import_tasks: passthrough.yml
+  become: true
+  tags: [ never, passthrough ]
+
 - import_tasks: interfaces.yml
   become: true
   when: "proxmox_interfaces | length > 0"

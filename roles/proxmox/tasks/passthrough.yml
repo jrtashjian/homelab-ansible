@@ -1,0 +1,46 @@
+- name: Determine if we're running systemd-boot or grub
+  ansible.builtin.stat:
+    path: /etc/kernel/proxmox-boot-uuids
+  register: boot_uuids
+
+- name: Check if iommu_kernel_cmds exists in cmdline
+  ansible.builtin.shell: cat /proc/cmdline | grep -q "{{ iommu_kernel_cmds }}"
+  register: iommu_kernel_cmds_exists
+  changed_when: false
+  failed_when: false
+
+- name: Update systemd-boot cmdline
+  ansible.builtin.copy:
+    content: "root={{ ansible_cmdline.root }} boot={{ ansible_cmdline.boot }} {{ iommu_kernel_cmds }}"
+    dest: /etc/kernel/cmdline
+  when: boot_uuids.stat.exists and not iommu_kernel_cmds_exists.rc == 0
+
+- name: Refresh systemd-boot
+  ansible.builtin.command: proxmox-boot-tool refresh
+  when: boot_uuids.stat.exists and not iommu_kernel_cmds_exists.rc == 0
+  notify: reboot
+
+- name: Update GRUB cmdline
+  ansible.builtin.replace:
+    path: /etc/default/grub
+    regexp: '^(GRUB_CMDLINE_LINUX_DEFAULT=(?!.*{{ iommu_kernel_cmds }})\"[^\"]+)(\")'
+    replace: '\1 {{ iommu_kernel_cmds }}\2'
+  when: not boot_uuids.stat.exists and not iommu_kernel_cmds_exists.rc == 0
+
+- name: Run update-grub
+  ansible.builtin.command: update-grub
+  when: not boot_uuids.stat.exists and not iommu_kernel_cmds_exists.rc == 0
+  notify: reboot
+
+- name: Copy config to /etc/modprobe.d/
+  template:
+    src: etc/modprobe.d/vfio.conf.j2
+    dest: /etc/modprobe.d/vfio.conf
+  when: "vfio_pci_ids | length > 0"
+  notify: reboot
+
+- name: Copy config to /etc/modules-load.d/
+  copy:
+    src: etc/modules-load.d/vfio.conf
+    dest: /etc/modules-load.d/vfio.conf
+  notify: reboot

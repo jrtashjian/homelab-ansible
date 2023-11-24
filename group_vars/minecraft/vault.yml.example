@@ -1,0 +1,8 @@
+ops:
+  - uuid: {{ op://homelab/aoqqi62qevnnknf4yxlowxvbb4/uuid }}
+    name: {{ op://homelab/aoqqi62qevnnknf4yxlowxvbb4/name }}
+    level: 4
+
+whitelist:
+  - uuid: {{ op://homelab/aoqqi62qevnnknf4yxlowxvbb4/uuid }}
+    name: {{ op://homelab/aoqqi62qevnnknf4yxlowxvbb4/name }}

@@ -33,3 +33,14 @@
   with_dict: "{{ server_properties_defaults | combine(server_properties, recursive=True) }}"
   when: "server_properties | length > 0"
   notify: restart minecraft
+
+- name: Update player permissions
+  ansible.builtin.copy:
+    dest: "{{ item.dest }}"
+    content: "{{ item.content | to_json }}"
+  loop:
+    - { dest: /opt/minecraft/ops.json, content: "{{ ops }}" }
+    - { dest: /opt/minecraft/whitelist.json, content: "{{ whitelist }}" }
+    - { dest: /opt/minecraft/banned-ips.json, content: "{{ banned_ips }}" }
+    - { dest: /opt/minecraft/banned-players.json, content: "{{ banned_players }}" }
+  notify: restart minecraft

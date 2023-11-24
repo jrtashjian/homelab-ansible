@@ -29,3 +29,25 @@ aikar_jvm_flags:
 #   value: false
 server_properties_defaults: [] # allows for defaults to be set at the group level and overridden at the host level
 server_properties: []
+
+# Example item:
+# - id: "123.123.123.123"
+#   expires: "forever"
+banned_ips: []
+
+# Example item:
+# - uuid: "0123abcd-01ab-23cd-45ef-012345abcdef"
+#   name: "player_name"
+#   expires: "forever"
+banned_players: []
+
+# Example item:
+# - uuid: "0123abcd-01ab-23cd-45ef-012345abcdef"
+#   name: "player_name"
+#   level: 4
+ops: []
+
+# Example item:
+# - uuid: "0123abcd-01ab-23cd-45ef-012345abcdef"
+#   name: "player_name"
+whitelist: []

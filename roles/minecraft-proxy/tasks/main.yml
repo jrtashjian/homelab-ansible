@@ -45,7 +45,7 @@
         dest: /opt/minecraft/waterfall.jar,
       }
     - {
-        url: "https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/bungeecord/build/libs/Geyser-BungeeCord.jar",
+        url: "https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/bungeecord",
         dest: /opt/minecraft/plugins/Geyser.jar,
       }
     - {

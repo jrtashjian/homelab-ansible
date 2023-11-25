@@ -9,3 +9,12 @@ server_properties_defaults:
   online-mode: "false" # Prevent checking against Mojang servers.
   white-list: "true"
   enforce-whitelist: "true"
+
+config_paper_global_defaults:
+  proxies:
+    bungee-cord:
+      online-mode: false
+
+spigot_defaults:
+  settings:
+    bungeecord: true

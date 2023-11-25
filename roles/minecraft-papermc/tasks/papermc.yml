@@ -44,3 +44,15 @@
     - { dest: /opt/minecraft/banned-ips.json, content: "{{ banned_ips }}" }
     - { dest: /opt/minecraft/banned-players.json, content: "{{ banned_players }}" }
   notify: restart minecraft
+
+- name: Update *.yml configuration
+  ansible.builtin.copy:
+    dest: "/opt/minecraft/{{ item.path }}"
+    content: "{{ lookup('file', 'opt/minecraft/' + item.path) | from_yaml | combine(vars[item.key + '_defaults'], recursive=True) | combine(vars[item.key], recursive=True) | to_nice_yaml }}"
+  loop:
+    - { key: "config_paper_global", path: "config/paper-global.yml" }
+    - { key: "config_paper_world", path: "config/paper-world-defaults.yml" }
+    - { key: "bukkit", path: "bukkit.yml" }
+    - { key: "spigot", path: "spigot.yml" }
+    - { key: "commands", path: "commands.yml" }
+  notify: restart minecraft

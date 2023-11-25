@@ -7,3 +7,5 @@ server_properties_defaults:
   hide-online-players: "true" # player list is not sent on status requests.
   max-players: "15"
   online-mode: "false" # Prevent checking against Mojang servers.
+  white-list: "true"
+  enforce-whitelist: "true"

@@ -2,7 +2,14 @@ ops:
   - uuid: {{ op://homelab/aoqqi62qevnnknf4yxlowxvbb4/uuid }}
     name: {{ op://homelab/aoqqi62qevnnknf4yxlowxvbb4/name }}
     level: 4
+  - uuid: {{ op://homelab/d5pw2hmqi2agfbtg3g4xqauuxm/uuid }}
+    name: {{ op://homelab/d5pw2hmqi2agfbtg3g4xqauuxm/name }}
+    level: 4
 
 whitelist:
   - uuid: {{ op://homelab/aoqqi62qevnnknf4yxlowxvbb4/uuid }}
     name: {{ op://homelab/aoqqi62qevnnknf4yxlowxvbb4/name }}
+  - uuid: {{ op://homelab/d5pw2hmqi2agfbtg3g4xqauuxm/uuid }}
+    name: {{ op://homelab/d5pw2hmqi2agfbtg3g4xqauuxm/name }}
+  - uuid: {{ op://homelab/5cuqox6dwe3cabbbzutf4zewtu/uuid }}
+    name: {{ op://homelab/5cuqox6dwe3cabbbzutf4zewtu/name }}

@@ -64,26 +64,13 @@
   notify: restart minecraft-proxy
   when: not ansible_check_mode
 
-- name: Load base *.yml configurations
-  include_vars:
-    file: "{{ item.file }}"
-    name: "{{ item.name }}"
+- name: Update *.yml configuration
+  ansible.builtin.copy:
+    dest: "/opt/minecraft/{{ item.path }}"
+    content: "{{ lookup('file', 'opt/minecraft/' + item.path) | from_yaml | combine(vars[item.key + '_defaults'], recursive=True) | combine(vars[item.key], recursive=True) | to_nice_yaml }}"
   loop:
-    - { name: "base_config_yml", file: files/opt/minecraft/config.yml }
-    - { name: "base_waterfall_yml", file: files/opt/minecraft/waterfall.yml }
-  register: result
-
-- name: Apply overrides to *.yml config files
-  become: true
-  template:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
-  loop:
-    - { src: opt/minecraft/config.yml.j2, dest: /opt/minecraft/config.yml }
-    - {
-        src: opt/minecraft/waterfall.yml.j2,
-        dest: /opt/minecraft/waterfall.yml,
-      }
+    - { key: "config_yml", path: "config.yml" }
+    - { key: "waterfall_yml", path: "waterfall.yml" }
   notify: restart minecraft-proxy
 
 - name: Create service

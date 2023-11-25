@@ -1,4 +1,4 @@
-config_yml_overrides:
+config_yml:
   groups:
     jrtashjian:
       - admin

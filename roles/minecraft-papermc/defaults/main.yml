@@ -53,12 +53,12 @@ ops: []
 whitelist: []
 
 # See files/opt/minecraft/config/paper-global.yml for example configuration.
-config_paper_global_defaults: [] # intended to be used at the group level
-config_paper_global: [] # intended to be used at the host level
+paper_global_defaults: [] # intended to be used at the group level
+paper_global: [] # intended to be used at the host level
 
 # See files/opt/minecraft/config/paper-world-defaults.yml for example configuration.
-config_paper_world_defaults: [] # intended to be used at the group level
-config_paper_world: [] # intended to be used at the host level
+paper_world_defaults: [] # intended to be used at the group level
+paper_world: [] # intended to be used at the host level
 
 # See files/opt/minecraft/bukkit.yml for example configuration.
 bukkit_defaults: [] # intended to be used at the group level

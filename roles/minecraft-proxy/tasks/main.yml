@@ -34,6 +34,12 @@
     url: https://papermc.io/api/v2/projects/waterfall/version_group/1.20/builds
   register: request_waterfall
 
+# https://github.com/sekwah41/Advanced-Portals
+- name: Determine latest Advanced Portals build
+  uri:
+    url: https://api.github.com/repos/sekwah41/Advanced-Portals/releases/latest
+  register: request_advanced_portals
+
 - name: Download server files
   become: true
   get_url:
@@ -57,8 +63,7 @@
         dest: /opt/minecraft/plugins/floodgate/floodgate-sqlite-database.jar,
       }
     - {
-        # https://api.github.com/repos/sekwah41/Advanced-Portals/releases/latest
-        url: "https://github.com/sekwah41/Advanced-Portals/releases/download/v0.9.3/Advanced-Portals-0.9.3.jar",
+        url: "{{ request_advanced_portals.json.assets[0].browser_download_url }}",
         dest: /opt/minecraft/plugins/Advanced-Portals.jar,
       }
   notify: restart minecraft-proxy

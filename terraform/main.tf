@@ -1,8 +1,8 @@
 terraform {
   required_providers {
     proxmox = {
-      source  = "Telmate/proxmox"
-      version = "2.9.14"
+      source  = "bpg/proxmox"
+      version = "0.38.1"
     }
     ansible = {
       source  = "ansible/ansible"
@@ -12,142 +12,201 @@ terraform {
 }
 
 provider "proxmox" {
-  pm_api_url = "https://192.168.10.12:8006/api2/json"
+  endpoint = "https://192.168.10.12:8006/"
+  insecure = true
 }
 
-resource "proxmox_vm_qemu" "docker" {
-  count = 4
+data "proxmox_virtual_environment_vms" "all_vms" {}
 
-  name        = format("docker%02d", count.index + 1)
-  target_node = "pve-node02"
+locals {
+  cloudinit_vm = try(
+    [for vm in data.proxmox_virtual_environment_vms.all_vms.vms : vm if vm.name == "cloudinit-debian-12"][0],
+    null
+  )
+}
 
-  clone   = "cloudinit-debian-12"
-  os_type = "cloud-init"
-  agent   = 1
+resource "proxmox_virtual_environment_vm" "docker" {
+  count = 1
 
-  qemu_os   = "l26"
-  cpu       = "x86-64-v2-AES"
-  scsihw    = "virtio-scsi-single"
-  boot      = "order=scsi0"
-  ipconfig0 = "ip=dhcp"
+  node_name = "pve-node02"
 
-  cores  = 2
-  memory = 2048
+  name = format("docker%02d", count.index + 1)
+  tags = ["terraform"]
 
-  ciuser     = var.ANSIBLE_USER
-  cipassword = var.ANSIBLE_PASS
-  sshkeys    = var.ANSIBLE_PUBLIC_KEY
+  clone {
+    vm_id   = local.cloudinit_vm.vm_id
+    retries = 3
+  }
+
+  agent {
+    enabled = true
+  }
+
+  operating_system {
+    type = "l26"
+  }
+
+  cpu {
+    type  = "x86-64-v2-AES"
+    cores = 2
+  }
+
+  memory {
+    dedicated = 2048
+  }
+
+  disk {
+    datastore_id = "machines"
+    size         = 8
+    interface    = "scsi0"
+    discard      = "on"
+    iothread     = true
+  }
+
+  scsi_hardware = "virtio-scsi-single"
+  boot_order    = ["scsi0"]
+
+  network_device {
+    firewall = true
+  }
 
   vga {
     type = "serial0"
   }
 
-  serial {
-    id   = 0
-    type = "socket"
-  }
+  serial_device {}
 
-  network {
-    bridge   = "vmbr0"
-    firewall = true
-    model    = "virtio"
-  }
+  initialization {
+    datastore_id = "machines"
 
-  disk {
-    type     = "scsi"
-    storage  = "machines"
-    size     = "10G"
-    discard  = "on"
-    iothread = 1
+    user_account {
+      username = var.ANSIBLE_USER
+      password = var.ANSIBLE_PASS
+      keys     = [var.ANSIBLE_PUBLIC_KEY]
+    }
+
+    ip_config {
+      ipv4 {
+        address = "dhcp"
+      }
+    }
   }
 }
 
 # Add the VMs to the Ansible inventory.
 resource "ansible_host" "docker" {
-  count = 4
+  for_each = { for instance in proxmox_virtual_environment_vm.docker : instance.name => instance }
 
-  name   = proxmox_vm_qemu.docker[count.index].name
+  name   = each.key
   groups = ["docker"]
 
   variables = {
-    ansible_host = proxmox_vm_qemu.docker[count.index].ssh_host
+    # lo is the first interface, eth0 is the second.
+    ansible_host = each.value.ipv4_addresses[1][0]
   }
 }
 
 locals {
   minecraft_lxc = {
     "proxy" = {
-      cores  = 2
-      memory = 2048
-      hwaddr = "7e:a2:d8:e0:b4:18"
-      groups = [ "minecraft", "minecraft-proxies" ]
+      cores       = 2
+      memory      = 2048
+      mac_address = "7e:a2:d8:e0:b4:18"
+      groups      = ["minecraft", "minecraft-proxies"]
     }
     "lobby" = {
-      cores  = 2
-      memory = 2048
-      hwaddr = "9a:77:71:bc:a0:7d"
-      groups = [ "minecraft", "minecraft-worlds" ]
+      cores       = 2
+      memory      = 2048
+      mac_address = "9a:77:71:bc:a0:7d"
+      groups      = ["minecraft", "minecraft-worlds"]
     }
     "main" = {
-      cores  = 8
-      memory = 8192
-      hwaddr = "3e:2c:e3:97:c8:25"
-      groups = [ "minecraft", "minecraft-worlds" ]
+      cores       = 8
+      memory      = 8192
+      mac_address = "3e:2c:e3:97:c8:25"
+      groups      = ["minecraft", "minecraft-worlds"]
     }
     "hardcore" = {
-      cores  = 8
-      memory = 8192
-      hwaddr = "6e:00:94:63:d3:0a"
-      groups = [ "minecraft", "minecraft-worlds" ]
+      cores       = 8
+      memory      = 8192
+      mac_address = "6e:00:94:63:d3:0a"
+      groups      = ["minecraft", "minecraft-worlds"]
     }
   }
 }
 
-resource "proxmox_lxc" "minecraft" {
+resource "proxmox_virtual_environment_container" "minecraft" {
   for_each = local.minecraft_lxc
 
-  hostname    = "minecraft-${each.key}"
-  target_node = "pve-node02"
+  node_name = "pve-node02"
 
-  ostemplate = "local:vztmpl/debian-12-standard_12.2-1_amd64.tar.zst"
+  tags = ["terraform"]
 
-  cores  = each.value.cores
-  memory = each.value.memory
+  cpu {
+    cores = each.value.cores
+  }
 
-  password        = var.ANSIBLE_PASS
-  ssh_public_keys = var.ANSIBLE_PUBLIC_KEY
+  memory {
+    dedicated = each.value.memory
+  }
 
-  onboot       = true
-  start        = true
-  unprivileged = true
+  disk {
+    datastore_id = "machines"
+    size         = 10
+  }
+
+  network_interface {
+    name        = "eth0"
+    firewall    = true
+    mac_address = each.value.mac_address
+  }
+
+  initialization {
+    hostname = "minecraft-${each.key}"
+
+    ip_config {
+      ipv4 {
+        address = "dhcp"
+      }
+    }
+
+    user_account {
+      password = var.ANSIBLE_PASS
+      keys     = [var.ANSIBLE_PUBLIC_KEY]
+    }
+  }
 
   features {
     nesting = true
   }
 
-  network {
-    name     = "eth0"
-    bridge   = "vmbr0"
-    firewall = true
-    ip       = "dhcp"
-    hwaddr   = each.value.hwaddr
-  }
+  unprivileged = true
 
-  rootfs {
-    storage = "machines"
-    size    = "10G"
+  operating_system {
+    type             = "debian"
+    template_file_id = proxmox_virtual_environment_file.debian_container_template.id
+  }
+}
+
+resource "proxmox_virtual_environment_file" "debian_container_template" {
+  content_type = "vztmpl"
+  datastore_id = "local"
+  node_name    = "pve-node02"
+
+  source_file {
+    path = "http://download.proxmox.com/images/system/debian-12-standard_12.2-1_amd64.tar.zst"
   }
 }
 
 # Add the LXCs to the Ansible inventory.
 resource "ansible_host" "minecraft" {
-  for_each = local.minecraft_lxc
+  for_each = proxmox_virtual_environment_container.minecraft
 
-  name   = proxmox_lxc.minecraft[each.key].hostname
-  groups = each.value.groups
+  name   = each.value.initialization[0].hostname
+  groups = local.minecraft_lxc[each.key].groups
 
   variables = {
     ansible_ssh_user = "root"
-    ansible_host = proxmox_lxc.minecraft[each.key].hostname
+    ansible_host     = each.value.initialization[0].hostname
   }
 }

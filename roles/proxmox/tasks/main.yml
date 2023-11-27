@@ -20,8 +20,3 @@
   become: true
   when: "proxmox_kvm | length > 0"
   tags: [ never, kvm ]
-
-- import_tasks: lxc.yml
-  become: true
-  when: "proxmox_lxc | length > 0"
-  tags: [ never, lxc ]

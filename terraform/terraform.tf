@@ -1,4 +1,21 @@
 terraform {
+  backend "s3" {
+    region = "main"
+    bucket = "terraform-state"
+    key    = "cluster/terraform.tfstate"
+
+    endpoints = {
+      s3 = "http://192.168.10.11:9000"
+    }
+
+    insecure       = true
+    use_path_style = true
+
+    skip_region_validation      = true
+    skip_credentials_validation = true
+    skip_requesting_account_id  = true
+  }
+
   required_providers {
     proxmox = {
       source  = "bpg/proxmox"

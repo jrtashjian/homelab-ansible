@@ -7,7 +7,6 @@ module "docker_vms" {
   source = "./modules/proxmox_vm"
 
   count = 2
-  tags  = ["terraform"]
 
   node_name = "pve-node02"
   vm_name   = format("docker%02d", count.index + 1)
@@ -64,7 +63,6 @@ module "minecraft_lxc" {
   source = "./modules/proxmox_container"
 
   for_each = local.minecraft_lxc
-  tags     = ["terraform"]
 
   node_name = "pve-node02"
   lxc_name  = "minecraft-${each.key}"

@@ -13,12 +13,6 @@ variable "vm_name" {
   type        = string
 }
 
-variable "tags" {
-  description = "The tags to apply to the VM"
-  type        = list(string)
-  default     = []
-}
-
 variable "cpu" {
   description = "The CPU configuration for the VM"
   type        = number

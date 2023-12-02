@@ -10,7 +10,7 @@ terraform {
 resource "proxmox_virtual_environment_vm" "base_vm" {
   node_name = var.node_name
   name      = var.vm_name
-  tags      = var.tags
+  tags      = ["terraform"]
 
   clone {
     vm_id   = local.cloudinit_vm.vm_id

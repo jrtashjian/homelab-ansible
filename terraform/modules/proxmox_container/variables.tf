@@ -8,12 +8,6 @@ variable "lxc_name" {
   type        = string
 }
 
-variable "tags" {
-  description = "The tags to apply to the LXC"
-  type        = list(string)
-  default     = []
-}
-
 variable "cpu" {
   description = "The CPU configuration for the LXC"
   type        = number

@@ -1,0 +1,26 @@
+- name: Install packages.
+  become: true
+  ansible.builtin.apt:
+    state: present
+    package:
+      - certbot
+      - python3-certbot-dns-linode
+
+- name: Write linode.ini file.
+  become: true
+  ansible.builtin.copy:
+    content: |
+      dns_linode_key = "{{ certbot_dns_linode_key }}"
+      dns_linode_version = "{{ certbot_dns_linode_version }}"
+    dest: /etc/letsencrypt/linode.ini
+    mode: 0600
+
+- name: Check if SSL certificate exists.
+  become: true
+  stat: path=/etc/letsencrypt/live/{{ certbot_domain }}/fullchain.pem
+  register: certbot_file
+
+- name: Generate SSL certificate.
+  become: true
+  ansible.builtin.command: certbot certonly --dns-linode --dns-linode-credentials /etc/letsencrypt/linode.ini --dns-linode-propagation-seconds 120 --agree-tos --email "{{ certbot_email }}" --non-interactive --domain "{{ certbot_domain }}"
+  when: certbot_dns_linode_key != "" and not certbot_file.stat.exists

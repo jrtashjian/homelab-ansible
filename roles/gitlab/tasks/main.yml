@@ -1,0 +1,46 @@
+- name: Check if GitLab is already installed.
+  stat: path=/usr/bin/gitlab-ctl
+  register: gitlab_file
+
+- name: Install GitLab dependencies
+  become: true
+  ansible.builtin.apt:
+    state: present
+    package:
+      - curl
+      - perl
+  when: not gitlab_file.stat.exists
+
+- name: Download GitLab repository installation script
+  become: true
+  ansible.builtin.get_url:
+    url: https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh
+    dest: /tmp/script.deb.sh
+    validate_certs: true
+  when: not gitlab_file.stat.exists
+
+- name: Install GitLab repository.
+  become: true
+  ansible.builtin.command: bash /tmp/script.deb.sh
+  environment:
+    EXTERNAL_URL: gitlab_external_url
+  when: not gitlab_file.stat.exists
+
+- name: Install GitLab
+  become: true
+  ansible.builtin.package:
+    name: "gitlab-ce"
+    state: present
+  async: 600
+  poll: 5
+  when: not gitlab_file.stat.exists
+
+- name: Copy GitLab configuration file.
+  become: true
+  template:
+    src: gitlab.rb.j2
+    dest: /etc/gitlab/gitlab.rb
+    owner: root
+    group: root
+    mode: 0600
+  notify: restart gitlab

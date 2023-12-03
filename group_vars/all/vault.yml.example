@@ -4,3 +4,6 @@ ansible_user: {{ op://homelab/ansible-user/username }}
 
 terraform_user: {{ op://homelab/terraform-user/username }}
 terraform_pass: {{ op://homelab/terraform-user/password }}
+
+certbot_email: {{ op://homelab/linode-certbot-ansible/email }}
+certbot_dns_linode_key: {{ op://homelab/linode-certbot-ansible/credential }}

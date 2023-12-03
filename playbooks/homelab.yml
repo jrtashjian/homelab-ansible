@@ -16,3 +16,9 @@
   roles:
     - common
     - minecraft-papermc
+
+- hosts: gitlab
+  roles:
+    - common
+    - certbot
+    - gitlab

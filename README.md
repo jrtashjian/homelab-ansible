@@ -55,7 +55,7 @@ ansible-playbook ./playbooks/homelab.yml
 ### Running on Terraform inventory
 
 ```bash
-ansible-playbook -i ./inventory-terraform.yml ./playbooks/homelab.yml
+op run --env-file="terraform/.env_vars" -- ansible-playbook -i ./inventory-terraform.yml ./playbooks/homelab.yml
 ```
 
 ## Running Terraform

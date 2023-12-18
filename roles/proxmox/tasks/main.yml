@@ -5,14 +5,6 @@
   become: true
   tags: [ never, passthrough ]
 
-- import_tasks: interfaces.yml
-  become: true
-  when: "proxmox_interfaces | length > 0"
-  tags: [ interfaces ]
-
-- import_tasks: firewall.yml
-  become: true
-
 - import_tasks: terraform.yml
   become: true
 

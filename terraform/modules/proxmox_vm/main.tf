@@ -72,7 +72,9 @@ resource "proxmox_virtual_environment_vm" "base_vm" {
   }
 }
 
-data "proxmox_virtual_environment_vms" "all_vms" {}
+data "proxmox_virtual_environment_vms" "all_vms" {
+  node_name = var.node_name
+}
 
 locals {
   cloudinit_vm = try(

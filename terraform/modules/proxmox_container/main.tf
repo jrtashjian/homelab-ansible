@@ -39,8 +39,8 @@ resource "proxmox_virtual_environment_container" "base_lxc" {
     }
 
     user_account {
-      password = var.ANSIBLE_PASS
-      keys     = [var.ANSIBLE_PUBLIC_KEY]
+      password = var.ansible_pass
+      keys     = [var.ansible_public_key]
     }
   }
 

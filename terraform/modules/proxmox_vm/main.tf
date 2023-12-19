@@ -59,9 +59,9 @@ resource "proxmox_virtual_environment_vm" "base_vm" {
     datastore_id = "machines"
 
     user_account {
-      username = var.ANSIBLE_USER
-      password = var.ANSIBLE_PASS
-      keys     = [var.ANSIBLE_PUBLIC_KEY]
+      username = var.ansible_user
+      password = var.ansible_pass
+      keys     = [var.ansible_public_key]
     }
 
     ip_config {

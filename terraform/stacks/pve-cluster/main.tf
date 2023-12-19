@@ -1,6 +1,24 @@
 provider "proxmox" {
   endpoint = "https://pve-node02.int.jrtashjian.com:8006/"
   insecure = true
+
+  ssh {
+    agent    = true
+    username = var.node02_user
+    password = var.node02_pass
+  }
+}
+
+provider "proxmox" {
+  alias    = "node03"
+  endpoint = "https://pve-node03.int.jrtashjian.com:8006/"
+  insecure = true
+
+  ssh {
+    agent    = true
+    username = var.node03_user
+    password = var.node03_pass
+  }
 }
 
 # Upload wildcard certificate and private key.

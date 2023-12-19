@@ -86,3 +86,67 @@ resource "proxmox_virtual_environment_cluster_firewall_security_group" "ssh-serv
     log     = "nolog"
   }
 }
+
+resource "proxmox_virtual_environment_file" "node02_debian_cloud_image" {
+  content_type = "iso"
+  datastore_id = "local"
+  node_name    = "pve-node02"
+
+  source_file {
+    path      = "http://cloud.debian.org/images/cloud/bookworm/latest/debian-12-genericcloud-amd64.qcow2"
+    file_name = "debian-12-genericcloud-amd64.img"
+  }
+}
+
+resource "proxmox_virtual_environment_file" "node03_debian_cloud_image" {
+  provider = proxmox.node03
+
+  content_type = "iso"
+  datastore_id = "local"
+  node_name    = "pve-node03"
+
+  source_file {
+    path      = "http://cloud.debian.org/images/cloud/bookworm/latest/debian-12-genericcloud-amd64.qcow2"
+    file_name = "debian-12-genericcloud-amd64.img"
+  }
+}
+
+resource "proxmox_virtual_environment_file" "node02_debian_vendor_config" {
+  content_type = "snippets"
+  datastore_id = "local"
+  node_name    = "pve-node02"
+
+  source_raw {
+    data = <<EOF
+#cloud-config
+runcmd:
+  - apt update
+  - apt install -y qemu-guest-agent
+  - systemctl enable qemu-guest-agent
+  - systemctl start qemu-guest-agent
+EOF
+
+    file_name = "debian-vendor-config.yaml"
+  }
+}
+
+resource "proxmox_virtual_environment_file" "node03_debian_vendor_config" {
+  provider = proxmox.node03
+
+  content_type = "snippets"
+  datastore_id = "local"
+  node_name    = "pve-node03"
+
+  source_raw {
+    data = <<EOF
+#cloud-config
+runcmd:
+  - apt update
+  - apt install -y qemu-guest-agent
+  - systemctl enable qemu-guest-agent
+  - systemctl start qemu-guest-agent
+EOF
+
+    file_name = "debian-vendor-config.yaml"
+  }
+}

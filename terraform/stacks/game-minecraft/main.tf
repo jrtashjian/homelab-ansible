@@ -49,8 +49,8 @@ module "minecraft_lxc" {
 
   ipv4_address = each.value.ipv4_address
 
-  ANSIBLE_PASS       = var.ANSIBLE_PASS
-  ANSIBLE_PUBLIC_KEY = var.ANSIBLE_PUBLIC_KEY
+  ANSIBLE_PASS       = var.ansible_pass
+  ANSIBLE_PUBLIC_KEY = var.ansible_public_key
 }
 
 # Add the LXCs to the Ansible inventory.
@@ -62,6 +62,6 @@ resource "ansible_host" "minecraft_lxc" {
 
   variables = {
     ansible_ssh_user = "root"
-    ansible_host     = each.value.ipv4_address[0]
+    ansible_host     = each.value.ipv4_address
   }
 }

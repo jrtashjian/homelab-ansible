@@ -15,9 +15,9 @@ module "gitlab_vms" {
 
   cloudinit_template = "cloudinit-debian-12"
 
-  ANSIBLE_USER       = var.ANSIBLE_USER
-  ANSIBLE_PASS       = var.ANSIBLE_PASS
-  ANSIBLE_PUBLIC_KEY = var.ANSIBLE_PUBLIC_KEY
+  ANSIBLE_USER       = var.ansible_user
+  ANSIBLE_PASS       = var.ansible_pass
+  ANSIBLE_PUBLIC_KEY = var.ansible_public_key
 }
 
 # Add the VMs to the Ansible inventory.
@@ -40,9 +40,9 @@ module "gitlab_runner_vms" {
 
   cloudinit_template = "cloudinit-debian-12"
 
-  ANSIBLE_USER       = var.ANSIBLE_USER
-  ANSIBLE_PASS       = var.ANSIBLE_PASS
-  ANSIBLE_PUBLIC_KEY = var.ANSIBLE_PUBLIC_KEY
+  ANSIBLE_USER       = var.ansible_user
+  ANSIBLE_PASS       = var.ansible_pass
+  ANSIBLE_PUBLIC_KEY = var.ansible_public_key
 }
 
 # Add the VMs to the Ansible inventory.

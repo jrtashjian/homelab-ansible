@@ -3,18 +3,24 @@ provider "proxmox" {
   insecure = true
 }
 
+# Upload wildcard certificate and private key.
+resource "proxmox_virtual_environment_certificate" "int_jrtashjian_com" {
+  certificate = var.int_jrtashjian_com_cert
+  node_name   = "pve-node02"
+  private_key = var.int_jrtashjian_com_key
+}
+
+# Add firewall aliases.
 resource "proxmox_virtual_environment_firewall_alias" "lan_network" {
   name    = "LAN"
   cidr    = "192.168.10.0/24"
   comment = "Managed by Terraform"
 }
-
 resource "proxmox_virtual_environment_firewall_alias" "opt1_network" {
   name    = "OPT1"
   cidr    = "192.168.20.0/24"
   comment = "Managed by Terraform"
 }
-
 resource "proxmox_virtual_environment_firewall_alias" "opt2_network" {
   name    = "OPT2"
   cidr    = "192.168.30.0/24"
@@ -35,6 +41,7 @@ resource "proxmox_virtual_environment_cluster_firewall" "cluster_firewall" {
   }
 }
 
+# Only allow SSH from the LAN.
 resource "proxmox_virtual_environment_cluster_firewall_security_group" "ssh-server" {
   name    = "ssh-server"
   comment = "Managed by Terraform"

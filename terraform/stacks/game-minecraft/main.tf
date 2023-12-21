@@ -49,8 +49,8 @@ module "minecraft_lxc" {
 
   ipv4_address = each.value.ipv4_address
 
-  ANSIBLE_PASS       = var.ansible_pass
-  ANSIBLE_PUBLIC_KEY = var.ansible_public_key
+  ansible_pass       = var.ansible_pass
+  ansible_public_key = var.ansible_public_key
 }
 
 # Add the LXCs to the Ansible inventory.

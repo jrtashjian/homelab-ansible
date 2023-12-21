@@ -132,7 +132,7 @@ resource "proxmox_virtual_environment_file" "debian_vendor_config_pve_node03" {
 
 resource "proxmox_virtual_environment_vm" "debian_template_pve_node02" {
   node_name = "pve-node02"
-  name      = "debian-12-template"
+  name      = "cloudinit-debian-12"
   template  = true
 
   agent {
@@ -189,7 +189,7 @@ resource "proxmox_virtual_environment_vm" "debian_template_pve_node02" {
 
 resource "proxmox_virtual_environment_vm" "debian_template_pve_node03" {
   node_name = "pve-node03"
-  name      = "debian-12-template"
+  name      = "cloudinit-debian-12"
   template  = true
 
   provider = proxmox.pve_node03

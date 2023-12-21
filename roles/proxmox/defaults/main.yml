@@ -1,6 +1,3 @@
 # List vendor-ID:device-ID sets to pass through
 # Find these using `lspci -nn`
 vfio_pci_ids: []
-
-proxmox_kvm_defaults:
-proxmox_kvm: []

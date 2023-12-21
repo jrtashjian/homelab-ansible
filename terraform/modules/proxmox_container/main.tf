@@ -9,6 +9,7 @@ terraform {
 
 resource "proxmox_virtual_environment_container" "base_lxc" {
   node_name = var.node_name
+  pool_id   = var.pool_id
   tags      = ["terraform"]
 
   cpu {
@@ -55,7 +56,7 @@ resource "proxmox_virtual_environment_container" "base_lxc" {
     template_file_id = proxmox_virtual_environment_file.debian_container_template.id
   }
 
-  depends_on = [ proxmox_virtual_environment_file.debian_container_template ]
+  depends_on = [proxmox_virtual_environment_file.debian_container_template]
 }
 
 resource "proxmox_virtual_environment_file" "debian_container_template" {

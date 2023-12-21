@@ -33,7 +33,7 @@ resource "ansible_host" "gitlab_vms" {
 module "gitlab_runner_vms" {
   source = "../../modules/proxmox_vm"
 
-  count     = 3
+  count     = 5
   memory    = 2048
   disk_size = 16
 

@@ -63,8 +63,6 @@ resource "proxmox_virtual_environment_file" "debian_container_template" {
   datastore_id = "local"
   node_name    = var.node_name
 
-  overwrite = false
-
   source_file {
     path = "http://download.proxmox.com/images/system/debian-12-standard_12.2-1_amd64.tar.zst"
   }

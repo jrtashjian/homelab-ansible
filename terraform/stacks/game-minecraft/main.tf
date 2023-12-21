@@ -40,6 +40,7 @@ module "minecraft_lxc" {
   source = "../../modules/proxmox_container"
 
   for_each = local.minecraft_lxc
+  pool_id  = proxmox_virtual_environment_pool.minecraft_pool.id
 
   node_name = each.value.node
   lxc_name  = "minecraft-${each.key}"
@@ -65,3 +66,9 @@ resource "ansible_host" "minecraft_lxc" {
     ansible_host     = each.value.ipv4_address
   }
 }
+
+resource "proxmox_virtual_environment_pool" "minecraft_pool" {
+  comment = "Managed by Terraform"
+  pool_id = "game-minecraft"
+}
+

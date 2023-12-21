@@ -12,20 +12,20 @@ locals {
       groups       = ["cmangos"]
       node         = "pve-node02"
     }
-    # "tbc" = {
-    #   cores        = 4
-    #   memory       = 4096
-    #   ipv4_address = "192.168.10.61/24"
-    #   groups       = ["cmangos"]
-    #   node         = "pve-node02"
-    # }
-    # "wotlk" = {
-    #   cores        = 4
-    #   memory       = 4096
-    #   ipv4_address = "192.168.10.62/24"
-    #   groups       = ["cmangos"]
-    #   node         = "pve-node02"
-    # }
+    "tbc" = {
+      cores        = 4
+      memory       = 4096
+      ipv4_address = "192.168.10.61/24"
+      groups       = ["cmangos"]
+      node         = "pve-node03"
+    }
+    "wotlk" = {
+      cores        = 4
+      memory       = 4096
+      ipv4_address = "192.168.10.62/24"
+      groups       = ["cmangos"]
+      node         = "pve-node03"
+    }
   }
 }
 
@@ -33,6 +33,7 @@ module "cmangos_hosts" {
   source = "../../modules/proxmox_container"
 
   for_each = local.cmangos_hosts
+  pool_id  = proxmox_virtual_environment_pool.cmangos_pool.id
 
   node_name = each.value.node
   lxc_name  = "cmangos-${each.key}"
@@ -56,4 +57,9 @@ resource "ansible_host" "cmangos_hosts" {
     ansible_ssh_user = "root"
     ansible_host     = each.value.ipv4_address
   }
+}
+
+resource "proxmox_virtual_environment_pool" "cmangos_pool" {
+  comment = "Managed by Terraform"
+  pool_id = "game-cmangos"
 }

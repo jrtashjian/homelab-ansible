@@ -23,14 +23,14 @@ provider "proxmox" {
 
 # Upload wildcard certificate and private key.
 resource "proxmox_virtual_environment_certificate" "pve_node02_int_jrtashjian_com" {
-  certificate = var.int_jrtashjian_com_cert
+  certificate = trimspace(var.int_jrtashjian_com_cert)
   node_name   = "pve-node02"
-  private_key = var.int_jrtashjian_com_key
+  private_key = trimspace(var.int_jrtashjian_com_key)
 }
 resource "proxmox_virtual_environment_certificate" "pve_node03_int_jrtashjian_com" {
-  certificate = var.int_jrtashjian_com_cert
+  certificate = trimspace(var.int_jrtashjian_com_cert)
   node_name   = "pve-node03"
-  private_key = var.int_jrtashjian_com_key
+  private_key = trimspace(var.int_jrtashjian_com_key)
 }
 
 # Add firewall aliases.

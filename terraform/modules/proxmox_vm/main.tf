@@ -70,6 +70,13 @@ resource "proxmox_virtual_environment_vm" "base_vm" {
       }
     }
   }
+
+  lifecycle {
+    # Prevents the VM from being destroyed when the vendor_data_file_id changes
+    ignore_changes = [
+      initialization[0].vendor_data_file_id
+    ]
+  }
 }
 
 data "proxmox_virtual_environment_vms" "all_vms" {

@@ -9,8 +9,9 @@ provider "proxmox" {
   }
 }
 
+# Uploading a snippet to a node with a sudo user fails so we need to alias the provider and use the root user.
 provider "proxmox" {
-  alias    = "node03"
+  alias    = "pve_node03"
   endpoint = "https://pve-node03.int.jrtashjian.com:8006/"
   insecure = true
 
@@ -21,15 +22,16 @@ provider "proxmox" {
   }
 }
 
-# Upload wildcard certificate and private key.
-resource "proxmox_virtual_environment_certificate" "pve_node02_int_jrtashjian_com" {
-  certificate = trimspace(var.int_jrtashjian_com_cert)
-  node_name   = "pve-node02"
-  private_key = trimspace(var.int_jrtashjian_com_key)
+locals {
+  pve_nodes = ["pve-node02", "pve-node03"]
 }
-resource "proxmox_virtual_environment_certificate" "pve_node03_int_jrtashjian_com" {
+
+# Upload wildcard certificate and private key.
+resource "proxmox_virtual_environment_certificate" "int_jrtashjian_com" {
+  for_each  = toset(local.pve_nodes)
+  node_name = each.key
+
   certificate = trimspace(var.int_jrtashjian_com_cert)
-  node_name   = "pve-node03"
   private_key = trimspace(var.int_jrtashjian_com_key)
 }
 
@@ -87,66 +89,164 @@ resource "proxmox_virtual_environment_cluster_firewall_security_group" "ssh-serv
   }
 }
 
-resource "proxmox_virtual_environment_file" "node02_debian_cloud_image" {
+resource "proxmox_virtual_environment_file" "debian_cloud_image" {
+  for_each  = toset(local.pve_nodes)
+  node_name = each.key
+
   content_type = "iso"
   datastore_id = "local"
-  node_name    = "pve-node02"
 
   source_file {
+    # Obtain with: `shasum -a256 debian-12-genericcloud-amd64.qcow2`
+    checksum  = "16e360b50572092ff5c1ed994285bcca961df28c081b7bb5d7c006d35bce4914"
     path      = "http://cloud.debian.org/images/cloud/bookworm/latest/debian-12-genericcloud-amd64.qcow2"
     file_name = "debian-12-genericcloud-amd64.img"
   }
 }
 
-resource "proxmox_virtual_environment_file" "node03_debian_cloud_image" {
-  provider = proxmox.node03
-
-  content_type = "iso"
-  datastore_id = "local"
-  node_name    = "pve-node03"
-
-  source_file {
-    path      = "http://cloud.debian.org/images/cloud/bookworm/latest/debian-12-genericcloud-amd64.qcow2"
-    file_name = "debian-12-genericcloud-amd64.img"
-  }
-}
-
-resource "proxmox_virtual_environment_file" "node02_debian_vendor_config" {
-  content_type = "snippets"
-  datastore_id = "local"
-  node_name    = "pve-node02"
-
-  source_raw {
-    data = <<EOF
-#cloud-config
-runcmd:
-  - apt update
-  - apt install -y qemu-guest-agent
-  - systemctl enable qemu-guest-agent
-  - systemctl start qemu-guest-agent
-EOF
-
-    file_name = "debian-vendor-config.yaml"
-  }
-}
-
-resource "proxmox_virtual_environment_file" "node03_debian_vendor_config" {
-  provider = proxmox.node03
+resource "proxmox_virtual_environment_file" "debian_vendor_config_pve_node02" {
+  node_name = local.pve_nodes[0]
 
   content_type = "snippets"
   datastore_id = "local"
-  node_name    = "pve-node03"
 
   source_raw {
-    data = <<EOF
-#cloud-config
-runcmd:
-  - apt update
-  - apt install -y qemu-guest-agent
-  - systemctl enable qemu-guest-agent
-  - systemctl start qemu-guest-agent
-EOF
-
-    file_name = "debian-vendor-config.yaml"
+    data      = file("debian-vendor-config.yml")
+    file_name = "debian-vendor-config.yml"
   }
+}
+
+resource "proxmox_virtual_environment_file" "debian_vendor_config_pve_node03" {
+  node_name = local.pve_nodes[1]
+
+  provider = proxmox.pve_node03
+
+  content_type = "snippets"
+  datastore_id = "local"
+
+  source_raw {
+    data      = file("debian-vendor-config.yml")
+    file_name = "debian-vendor-config.yml"
+  }
+}
+
+resource "proxmox_virtual_environment_vm" "debian_template_pve_node02" {
+  node_name = "pve-node02"
+  name      = "debian-12-template"
+  template  = true
+
+  agent {
+    enabled = true
+  }
+
+  operating_system {
+    type = "l26"
+  }
+
+  cpu {
+    type = "x86-64-v2-AES"
+  }
+
+  disk {
+    datastore_id = "machines"
+    file_id      = proxmox_virtual_environment_file.debian_cloud_image["pve-node02"].id
+    interface    = "scsi0"
+    discard      = "on"
+    iothread     = true
+  }
+
+  scsi_hardware = "virtio-scsi-single"
+  boot_order    = ["scsi0"]
+
+  network_device {
+    firewall = true
+  }
+
+  vga {
+    type = "serial0"
+  }
+
+  serial_device {}
+
+  initialization {
+    datastore_id = "machines"
+
+    user_account {
+      username = var.ansible_user
+      password = var.ansible_pass
+      keys     = [var.ansible_public_key]
+    }
+
+    ip_config {
+      ipv4 {
+        address = "dhcp"
+      }
+    }
+
+    vendor_data_file_id = proxmox_virtual_environment_file.debian_vendor_config_pve_node02.id
+  }
+}
+
+resource "proxmox_virtual_environment_vm" "debian_template_pve_node03" {
+  node_name = "pve-node03"
+  name      = "debian-12-template"
+  template  = true
+
+  provider = proxmox.pve_node03
+
+  agent {
+    enabled = true
+  }
+
+  operating_system {
+    type = "l26"
+  }
+
+  cpu {
+    type = "x86-64-v2-AES"
+  }
+
+  disk {
+    datastore_id = "machines"
+    file_id      = proxmox_virtual_environment_file.debian_cloud_image["pve-node03"].id
+    interface    = "scsi0"
+    discard      = "on"
+    iothread     = true
+  }
+
+  scsi_hardware = "virtio-scsi-single"
+  boot_order    = ["scsi0"]
+
+  network_device {
+    firewall = true
+  }
+
+  vga {
+    type = "serial0"
+  }
+
+  serial_device {}
+
+  initialization {
+    datastore_id = "machines"
+
+    user_account {
+      username = var.ansible_user
+      password = var.ansible_pass
+      keys     = [var.ansible_public_key]
+    }
+
+    ip_config {
+      ipv4 {
+        address = "dhcp"
+      }
+    }
+
+    vendor_data_file_id = proxmox_virtual_environment_file.debian_vendor_config_pve_node03.id
+  }
+
+  # Because we need to use provider aliases, we need to order template creation so that the same next-VMID is not used.
+  depends_on = [
+    proxmox_virtual_environment_vm.debian_template_pve_node02
+  ]
 }

@@ -15,9 +15,9 @@ module "gitlab_vms" {
 
   cloudinit_template = "cloudinit-debian-12"
 
-  ANSIBLE_USER       = var.ansible_user
-  ANSIBLE_PASS       = var.ansible_pass
-  ANSIBLE_PUBLIC_KEY = var.ansible_public_key
+  ansible_user       = var.ansible_user
+  ansible_pass       = var.ansible_pass
+  ansible_public_key = var.ansible_public_key
 }
 
 # Add the VMs to the Ansible inventory.
@@ -33,16 +33,18 @@ resource "ansible_host" "gitlab_vms" {
 module "gitlab_runner_vms" {
   source = "../../modules/proxmox_vm"
 
-  count = 2
+  count     = 3
+  memory    = 2048
+  disk_size = 16
 
   node_name = count.index % 2 == 0 ? "pve-node02" : "pve-node03"
   vm_name   = format("gitlab-runner%02d", count.index + 1)
 
   cloudinit_template = "cloudinit-debian-12"
 
-  ANSIBLE_USER       = var.ansible_user
-  ANSIBLE_PASS       = var.ansible_pass
-  ANSIBLE_PUBLIC_KEY = var.ansible_public_key
+  ansible_user       = var.ansible_user
+  ansible_pass       = var.ansible_pass
+  ansible_public_key = var.ansible_public_key
 }
 
 # Add the VMs to the Ansible inventory.

@@ -22,5 +22,5 @@
 
 - name: Generate SSL certificate.
   become: true
-  ansible.builtin.command: certbot certonly --dns-linode --dns-linode-credentials /etc/letsencrypt/linode.ini --dns-linode-propagation-seconds 120 --agree-tos --email "{{ certbot_email }}" --non-interactive --domain "{{ certbot_domain }}"
+  ansible.builtin.command: certbot certonly --dns-linode --dns-linode-credentials /etc/letsencrypt/linode.ini --dns-linode-propagation-seconds 300 --agree-tos --email "{{ certbot_email }}" --non-interactive --domain "{{ certbot_domain }}"
   when: certbot_dns_linode_key != "" and not certbot_file.stat.exists

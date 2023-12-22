@@ -1,4 +1,4 @@
-gitlab_domain: gitlab.talos.link
+gitlab_domain: gitlab.int.jrtashjian.com
 gitlab_external_url: "https://{{ gitlab_domain }}/"
 gitlab_ssl_certificate: "/etc/letsencrypt/live/{{ gitlab_domain }}/fullchain.pem"
 gitlab_ssl_certificate_key: "/etc/letsencrypt/live/{{ gitlab_domain }}/privkey.pem"

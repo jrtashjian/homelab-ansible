@@ -65,7 +65,7 @@ external_url "{{ gitlab_external_url }}"
 ################################################################################
 # gitlab_rails['gitlab_ssh_host'] = 'ssh.host_example.com'
 # gitlab_rails['gitlab_ssh_user'] = ''
-gitlab_rails['time_zone'] = "{{ gitlab_time_zone }}"
+# gitlab_rails['time_zone'] = 'UTC'
 
 ### Rails asset / CDN host
 ###! Defines a url for a host/cdn to use for the Rails assets
@@ -130,7 +130,8 @@ gitlab_rails['time_zone'] = "{{ gitlab_time_zone }}"
 ##! `8`  for Light Green
 ##! `9`  for Red
 ##! `10` for Light Red
-gitlab_rails['gitlab_default_theme'] = "{{ gitlab_default_theme }}"
+##! `11` for Dark Mode (alpha)
+gitlab_rails['gitlab_default_theme'] = "11"
 
 ### Default project feature settings
 # gitlab_rails['gitlab_default_projects_features_issues'] = true
@@ -558,26 +559,21 @@ gitlab_rails['gitlab_default_theme'] = "{{ gitlab_default_theme }}"
 
 ### OmniAuth Settings
 ###! Docs: https://docs.gitlab.com/ee/integration/omniauth.html
-# gitlab_rails['omniauth_enabled'] = nil
-# gitlab_rails['omniauth_allow_single_sign_on'] = ['saml']
-# gitlab_rails['omniauth_sync_email_from_provider'] = 'saml'
-# gitlab_rails['omniauth_sync_profile_from_provider'] = ['saml']
-# gitlab_rails['omniauth_sync_profile_attributes'] = ['email']
+{% if gitlab_omniauth_providers %}
+gitlab_rails['omniauth_enabled'] = true
+{% endif %}
+gitlab_rails['omniauth_allow_single_sign_on'] = ['saml']
+gitlab_rails['omniauth_sync_email_from_provider'] = 'saml'
+gitlab_rails['omniauth_sync_profile_from_provider'] = ['saml']
+gitlab_rails['omniauth_sync_profile_attributes'] = ['email']
 # gitlab_rails['omniauth_auto_sign_in_with_provider'] = 'saml'
-# gitlab_rails['omniauth_block_auto_created_users'] = true
+gitlab_rails['omniauth_block_auto_created_users'] = false
 # gitlab_rails['omniauth_auto_link_ldap_user'] = false
-# gitlab_rails['omniauth_auto_link_saml_user'] = false
+gitlab_rails['omniauth_auto_link_saml_user'] = true
 # gitlab_rails['omniauth_auto_link_user'] = ['twitter']
 # gitlab_rails['omniauth_external_providers'] = ['twitter', 'google_oauth2']
 # gitlab_rails['omniauth_allow_bypass_two_factor'] = ['google_oauth2']
-# gitlab_rails['omniauth_providers'] = [
-#   {
-#     "name" => "google_oauth2",
-#     "app_id" => "YOUR APP ID",
-#     "app_secret" => "YOUR APP SECRET",
-#     "args" => { "access_type" => "offline", "approval_prompt" => "" }
-#   }
-# ]
+gitlab_rails['omniauth_providers'] = {{ gitlab_omniauth_providers }}
 # gitlab_rails['omniauth_cas3_session_duration'] = 28800
 # gitlab_rails['omniauth_saml_message_max_byte_size'] = 250000
 
@@ -612,7 +608,7 @@ gitlab_rails['gitlab_default_theme'] = "{{ gitlab_default_theme }}"
 # gitlab_rails['backup_pg_schema'] = 'public'
 
 ###! The duration in seconds to keep backups before they are allowed to be deleted
-gitlab_rails['backup_keep_time'] = "{{ gitlab_backup_keep_time }}"
+# gitlab_rails['backup_keep_time'] = 604800
 
 # gitlab_rails['backup_upload_connection'] = {
 #   'provider' => 'AWS',
@@ -1187,7 +1183,7 @@ gitlab_rails['backup_keep_time'] = "{{ gitlab_backup_keep_time }}"
 ###! Docs: https://github.com/schneems/puma_worker_killer
 # puma['per_worker_max_memory_mb'] = 1024
 
-puma['exporter_enabled'] = false
+# puma['exporter_enabled'] = false
 # puma['exporter_address'] = "127.0.0.1"
 # puma['exporter_port'] = 8083
 # puma['exporter_tls_enabled'] = false
@@ -1212,7 +1208,7 @@ puma['exporter_enabled'] = false
 ##! can be used to ensure certain queues are able to handle additional workload.
 ##! https://docs.gitlab.com/ee/administration/operations/extra_sidekiq_processes.html
 
-sidekiq['enable'] = false
+# sidekiq['enable'] = false
 # sidekiq['log_directory'] = "/var/log/gitlab/sidekiq"
 # sidekiq['log_format'] = "json"
 # sidekiq['shutdown_timeout'] = 4

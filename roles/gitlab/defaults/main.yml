@@ -1,11 +1,9 @@
 gitlab_domain: "gitlab.example.com"
 gitlab_external_url: "http://{{ gitlab_domain }}/"
 
-gitlab_time_zone: "UTC"
-gitlab_backup_keep_time: "604800"
-gitlab_default_theme: "11"
-
 # SSL Configuration.
 gitlab_redirect_http_to_https: false
 gitlab_ssl_certificate: "/etc/gitlab/ssl/{{ gitlab_domain }}.crt"
 gitlab_ssl_certificate_key: "/etc/gitlab/ssl/{{ gitlab_domain }}.key"
+
+gitlab_omniauth_providers: ""

@@ -23,16 +23,31 @@ provider "proxmox" {
 }
 
 locals {
-  pve_nodes = ["pve-node02", "pve-node03"]
+  pve_nodes = {
+    "pve-node02" = "192.168.30.12/24"
+    "pve-node03" = "192.168.30.13/24"
+  }
 }
 
 # Upload wildcard certificate and private key.
 resource "proxmox_virtual_environment_certificate" "int_jrtashjian_com" {
-  for_each  = toset(local.pve_nodes)
+  for_each  = local.pve_nodes
   node_name = each.key
 
   certificate = trimspace(var.int_jrtashjian_com_cert)
   private_key = trimspace(var.int_jrtashjian_com_key)
+}
+
+# Create a Linux bridge for the storage network.
+resource "proxmox_virtual_environment_network_linux_bridge" "vmbr1" {
+  for_each  = local.pve_nodes
+  node_name = each.key
+
+  name    = "vmbr1"
+  comment = "Managed by Terraform"
+
+  ports   = ["eno3"]
+  address = each.value
 }
 
 # Add firewall aliases.
@@ -90,7 +105,7 @@ resource "proxmox_virtual_environment_cluster_firewall_security_group" "ssh-serv
 }
 
 resource "proxmox_virtual_environment_file" "debian_cloud_image" {
-  for_each  = toset(local.pve_nodes)
+  for_each  = local.pve_nodes
   node_name = each.key
 
   content_type = "iso"
@@ -105,7 +120,7 @@ resource "proxmox_virtual_environment_file" "debian_cloud_image" {
 }
 
 resource "proxmox_virtual_environment_file" "debian_vendor_config_pve_node02" {
-  node_name = local.pve_nodes[0]
+  node_name = "pve-node02"
 
   content_type = "snippets"
   datastore_id = "local"
@@ -117,7 +132,7 @@ resource "proxmox_virtual_environment_file" "debian_vendor_config_pve_node02" {
 }
 
 resource "proxmox_virtual_environment_file" "debian_vendor_config_pve_node03" {
-  node_name = local.pve_nodes[1]
+  node_name = "pve-node03"
 
   provider = proxmox.pve_node03
 

@@ -335,19 +335,21 @@ gitlab_rails['gitlab_default_theme'] = "11"
 ###!
 ###! Be sure to use different buckets for each type of object.
 ###! Docs: https://docs.gitlab.com/ee/administration/object_storage.html
-# gitlab_rails['object_store']['enabled'] = false
-# gitlab_rails['object_store']['connection'] = {}
+{% if gitlab_object_store_connection %}
+gitlab_rails['object_store']['enabled'] = true
+gitlab_rails['object_store']['connection'] = {{ gitlab_object_store_connection }}
 # gitlab_rails['object_store']['storage_options'] = {}
-# gitlab_rails['object_store']['proxy_download'] = false
-# gitlab_rails['object_store']['objects']['artifacts']['bucket'] = nil
-# gitlab_rails['object_store']['objects']['external_diffs']['bucket'] = nil
-# gitlab_rails['object_store']['objects']['lfs']['bucket'] = nil
-# gitlab_rails['object_store']['objects']['uploads']['bucket'] = nil
-# gitlab_rails['object_store']['objects']['packages']['bucket'] = nil
-# gitlab_rails['object_store']['objects']['dependency_proxy']['bucket'] = nil
-# gitlab_rails['object_store']['objects']['terraform_state']['bucket'] = nil
-# gitlab_rails['object_store']['objects']['ci_secure_files']['bucket'] = nil
-# gitlab_rails['object_store']['objects']['pages']['bucket'] = nil
+gitlab_rails['object_store']['proxy_download'] = true
+gitlab_rails['object_store']['objects']['artifacts']['bucket'] = "gitlab-artifacts"
+gitlab_rails['object_store']['objects']['external_diffs']['bucket'] = "gitlab-external-diffs"
+gitlab_rails['object_store']['objects']['lfs']['bucket'] = "gitlab-lfs"
+gitlab_rails['object_store']['objects']['uploads']['bucket'] = "gitlab-uploads"
+gitlab_rails['object_store']['objects']['packages']['bucket'] = "gitlab-packages"
+gitlab_rails['object_store']['objects']['dependency_proxy']['bucket'] = "gitlab-dependency-proxy"
+gitlab_rails['object_store']['objects']['terraform_state']['bucket'] = "gitlab-terraform-state"
+gitlab_rails['object_store']['objects']['ci_secure_files']['bucket'] = "gitlab-ci-secure-files"
+gitlab_rails['object_store']['objects']['pages']['bucket'] = "gitlab-pages"
+{% endif %}
 
 ### Job Artifacts
 # gitlab_rails['artifacts_enabled'] = true

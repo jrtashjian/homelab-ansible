@@ -2,23 +2,21 @@
   roles:
     - common
     - gitlab
-  tasks:
-    - name: Create GitLab SSL certificate directory
-      become: true
+  become: true
+  pre_tasks:
+    - name: Create SSL certificate directory
       ansible.builtin.file:
         path: /etc/gitlab/certs
         state: directory
         mode: '0755'
-    - name: Create GitLab SSL certificate
-      become: true
+    - name: Create SSL certificate
       ansible.builtin.copy:
-        content: "{{ lookup('community.general.onepassword', 'int.jrtashjian.com', vault=onepassword_vault, field='certificate' ) }}"
+        content: "{{ cluster_ssl_certificate }}"
         dest: /etc/gitlab/certs/fullchain.pem
         mode: '0644'
-    - name: Create GitLab SSL certificate key
-      become: true
+    - name: Create SSL certificate key
       ansible.builtin.copy:
-        content: "{{ lookup('community.general.onepassword', 'int.jrtashjian.com', vault=onepassword_vault, field='private_key' ) }}"
+        content: "{{ cluster_ssl_certificate_key }}"
         dest: /etc/gitlab/certs/privkey.pem
         mode: '0644'
 
@@ -28,3 +26,27 @@
     - docker
     - gitlab-runner
   become: true
+  pre_tasks:
+    - name: Create SSL certificate directory
+      ansible.builtin.file:
+        path: /etc/gitlab-runner/certs
+        state: directory
+        mode: '0755'
+    - name: Create SSL certificate
+      ansible.builtin.copy:
+        content: "{{ cluster_ssl_certificate }}"
+        dest: /etc/gitlab-runner/certs/fullchain.pem
+        mode: '0644'
+    - name: Create SSL certificate key
+      ansible.builtin.copy:
+        content: "{{ cluster_ssl_certificate_key }}"
+        dest: /etc/gitlab-runner/certs/privkey.pem
+        mode: '0644'
+
+# Run this command on each runner to register it with GitLab:
+
+# sudo gitlab-runner register --url https://gitlab.int.jrtashjian.com --non-interactive \
+# --tls-ca-file /etc/gitlab-runner/certs/fullchain.pem \
+# --executor "docker" \
+# --docker-image alpine:latest \
+# --token REPLACE_WITH_RUNNER_TOKEN

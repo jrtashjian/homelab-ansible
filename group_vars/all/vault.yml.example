@@ -10,6 +10,11 @@ ldap_port: 3890
 ldap_bind_user: {{ op://homelab/LDAP bind_user/username }}
 ldap_bind_pass: {{ op://homelab/LDAP bind_user/password }}
 
+smtp_host: {{ op://homelab/smtp_server/server }}
+smtp_port: {{ op://homelab/smtp_server/SMTP/port number }}
+smtp_user: {{ op://homelab/smtp_server/username }}
+smtp_pass: {{ op://homelab/smtp_server/password }}
+
 certbot_email: {{ op://homelab/linode-certbot-ansible/email }}
 certbot_dns_linode_key: {{ op://homelab/linode-certbot-ansible/credential }}
 

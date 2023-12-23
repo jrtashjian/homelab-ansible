@@ -3,6 +3,13 @@ gitlab_external_url: "https://{{ gitlab_domain }}/"
 gitlab_ssl_certificate: "/etc/gitlab/certs/fullchain.pem"
 gitlab_ssl_certificate_key: "/etc/gitlab/certs/privkey.pem"
 
+gitlab_smtp:
+  address: "{{ smtp_host }}"
+  port: "{{ smtp_port }}"
+  user_name: "{{ smtp_user }}"
+  password: "{{ smtp_pass }}"
+  domain: "jrtashjian.com"
+
 gitlab_object_store_connection: |
   {
     'provider' => 'AWS',

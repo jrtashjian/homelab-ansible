@@ -2,3 +2,13 @@ gitlab_domain: gitlab.int.jrtashjian.com
 gitlab_external_url: "https://{{ gitlab_domain }}/"
 gitlab_ssl_certificate: "/etc/gitlab/certs/fullchain.pem"
 gitlab_ssl_certificate_key: "/etc/gitlab/certs/privkey.pem"
+
+gitlab_object_store_connection: |
+  {
+    'provider' => 'AWS',
+    'region' => 'us-east-1',
+    'aws_access_key_id' => '{{ minio_access_key_id }}',
+    'aws_secret_access_key' => '{{ minio_secret_access_key }}',
+    'endpoint' => 'http://{{ minio_endpoint }}',
+    'path_style' => true
+  }

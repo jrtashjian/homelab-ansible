@@ -1,0 +1,11 @@
+[[runners]]
+  [runners.cache]
+  Type = "s3"
+  Shared = true
+  [runners.cache.s3]
+    ServerAddress = "{{ gitlab_runners_cache_s3.server_address }}"
+    AccessKey = "{{ gitlab_runners_cache_s3.access_key }}"
+    SecretKey = "{{ gitlab_runners_cache_s3.secret_key }}"
+    BucketName = "gitlab-runners-cache"
+    BucketLocation = "us-east-1"
+    Insecure = true

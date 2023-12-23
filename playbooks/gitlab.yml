@@ -49,4 +49,5 @@
 # --tls-ca-file /etc/gitlab-runner/certs/fullchain.pem \
 # --executor "docker" \
 # --docker-image alpine:latest \
+# --template-config /tmp/config.toml \
 # --token REPLACE_WITH_RUNNER_TOKEN

@@ -1,0 +1,4 @@
+gitlab_runners_cache_s3:
+  server_address: "{{ minio_endpoint }}"
+  access_key: "{{ minio_access_key_id }}"
+  secret_key: "{{ minio_secret_access_key }}"

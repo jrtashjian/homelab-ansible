@@ -34,3 +34,8 @@
   async: 600
   poll: 5
   when: not gitlab_runner_file.stat.exists
+
+- name: Copy GitLab Runner temporary configuration file.
+  template:
+    src: config.toml.j2
+    dest: /tmp/config.toml

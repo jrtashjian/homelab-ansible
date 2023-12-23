@@ -561,7 +561,6 @@ gitlab_rails['gitlab_default_theme'] = "11"
 ###! Docs: https://docs.gitlab.com/ee/integration/omniauth.html
 {% if gitlab_omniauth_providers %}
 gitlab_rails['omniauth_enabled'] = true
-{% endif %}
 gitlab_rails['omniauth_allow_single_sign_on'] = ['saml']
 gitlab_rails['omniauth_sync_email_from_provider'] = 'saml'
 gitlab_rails['omniauth_sync_profile_from_provider'] = ['saml']
@@ -576,6 +575,7 @@ gitlab_rails['omniauth_auto_link_saml_user'] = true
 gitlab_rails['omniauth_providers'] = {{ gitlab_omniauth_providers }}
 # gitlab_rails['omniauth_cas3_session_duration'] = 28800
 # gitlab_rails['omniauth_saml_message_max_byte_size'] = 250000
+{% endif %}
 
 ### FortiAuthenticator authentication settings
 # gitlab_rails['forti_authenticator_enabled'] = false

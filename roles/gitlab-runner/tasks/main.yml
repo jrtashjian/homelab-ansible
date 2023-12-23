@@ -1,0 +1,36 @@
+- name: Check if GitLab Runner is already installed.
+  ansible.builtin.stat: path=/usr/bin/gitlab-runner
+  register: gitlab_runner_file
+
+- name: Install GitLab Runner dependencies
+  become: true
+  ansible.builtin.apt:
+    state: present
+    package:
+      - curl
+      - perl
+  when: not gitlab_runner_file.stat.exists
+
+- name: Download GitLab Runner repository installation script
+  become: true
+  ansible.builtin.get_url:
+    url: https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh
+    dest: /tmp/script.deb.sh
+    validate_certs: true
+  when: not gitlab_runner_file.stat.exists
+
+- name: Install GitLab Runner repository.
+  become: true
+  ansible.builtin.command: bash /tmp/script.deb.sh
+  environment:
+    EXTERNAL_URL: gitlab_external_url
+  when: not gitlab_runner_file.stat.exists
+
+- name: Install GitLab Runner
+  become: true
+  ansible.builtin.package:
+    name: "gitlab-runner"
+    state: present
+  async: 600
+  poll: 5
+  when: not gitlab_runner_file.stat.exists

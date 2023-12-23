@@ -1,1 +1,4 @@
 onepassword_vault: homelab
+
+cluster_ssl_certificate: "{{ lookup('file', '../files/fullchain.pem') }}"
+cluster_ssl_certificate_key: "{{ lookup('file', '../files/privkey.pem') }}"

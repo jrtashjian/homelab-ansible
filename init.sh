@@ -45,6 +45,11 @@ sudo -u $SUDO_USER op read "op://homelab/ansible-user/Credentials/.ansible-vault
 # Install ansible and ansible-galaxy requirements
 sudo -u $SUDO_USER ansible-galaxy install -r requirements.yml
 
+# Retrieve *.int.jrtashjian.com wildcard certificate from 1Password
+sudo -u $SUDO_USER op read "op://homelab/int.jrtashjian.com/int.jrtashjian.com.p12" -o files/int.jrtashjian.com.p12
+sudo -u $SUDO_USER openssl pkcs12 -in files/int.jrtashjian.com.p12 -out files/fullchain.pem -clcerts -nokeys --legacy --passin pass:""
+sudo -u $SUDO_USER openssl pkcs12 -in files/int.jrtashjian.com.p12 -out files/privkey.pem -nocerts -nodes --legacy --passin pass:""
+
 # Fetch secrets from 1Password and encrypt them with ansible-vault
 sudo -u $SUDO_USER op inject -i group_vars/all/vault.yml.example -o group_vars/all/vault.yml --force
 sudo -u $SUDO_USER ansible-vault encrypt group_vars/all/vault.yml

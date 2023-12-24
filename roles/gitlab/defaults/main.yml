@@ -9,3 +9,5 @@ gitlab_ssl_certificate_key: "/etc/gitlab/ssl/{{ gitlab_domain }}.key"
 gitlab_omniauth_providers: ""
 gitlab_object_store_connection: ""
 gitlab_ldap_servers: ""
+gitlab_smtp:
+gitlab_registry_storage: ""

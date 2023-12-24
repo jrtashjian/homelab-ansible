@@ -927,8 +927,8 @@ gitlab_rails['omniauth_providers'] = {{ gitlab_omniauth_providers }}
 ## Container Registry settings
 ##! Docs: https://docs.gitlab.com/ee/administration/packages/container_registry.html
 ################################################################################
-
-# registry_external_url 'https://registry.example.com'
+{% if gitlab_registry_storage %}
+registry_external_url '{{ gitlab_external_url | replace("gitlab", "registry") }}'
 
 ### Settings used by GitLab application
 # gitlab_rails['registry_enabled'] = true
@@ -948,7 +948,7 @@ gitlab_rails['omniauth_providers'] = {{ gitlab_omniauth_providers }}
 # gitlab_rails['registry_issuer'] = "omnibus-gitlab-issuer"
 
 ### Settings used by Registry application
-# registry['enable'] = true
+registry['enable'] = true
 # registry['username'] = "registry"
 # registry['group'] = "registry"
 # registry['uid'] = nil
@@ -974,18 +974,7 @@ gitlab_rails['omniauth_providers'] = {{ gitlab_omniauth_providers }}
 
 ### Registry backend storage
 ###! Docs: https://docs.gitlab.com/ee/administration/packages/container_registry.html#configure-storage-for-the-container-registry
-# registry['storage'] = {
-#   's3' => {
-#     'accesskey' => 's3-access-key',
-#     'secretkey' => 's3-secret-key-for-access-key',
-#     'bucket' => 'your-s3-bucket',
-#     'region' => 'your-s3-region',
-#     'regionendpoint' => 'your-s3-regionendpoint'
-#   },
-#   'redirect' => {
-#     'disable' => false
-#   }
-# }
+registry['storage'] = {{ gitlab_registry_storage }}
 
 ### Registry database
 ###! Docs: https://docs.gitlab.com/ee/administration/packages/container_registry.html?tab=Linux+package+%28Omnibus%29#configure-a-metadata-database-for-the-container-registry
@@ -1028,6 +1017,7 @@ gitlab_rails['omniauth_providers'] = {{ gitlab_omniauth_providers }}
 # registry['default_notifications_threshold'] = 5
 # registry['default_notifications_backoff'] = "1s"
 # registry['default_notifications_headers'] = {}
+{% endif %}
 
 ################################################################################
 ## Error Reporting and Logging with Sentry
@@ -2210,6 +2200,8 @@ nginx['ssl_certificate_key'] = "{{ gitlab_ssl_certificate_key }}"
 
 # Below you can find settings that are exclusive to "Registry NGINX"
 # registry_nginx['enable'] = false
+registry_nginx['ssl_certificate'] = "{{ gitlab_ssl_certificate }}"
+registry_nginx['ssl_certificate_key'] = "{{ gitlab_ssl_certificate_key }}"
 
 # registry_nginx['proxy_set_headers'] = {
 #  "Host" => "$http_host",

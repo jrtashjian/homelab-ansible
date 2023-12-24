@@ -39,3 +39,4 @@
   template:
     src: config.toml.j2
     dest: /tmp/config.toml
+  notify: restart gitlab_runner

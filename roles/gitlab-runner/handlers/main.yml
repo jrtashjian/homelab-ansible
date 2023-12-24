@@ -1,0 +1,5 @@
+- name: restart gitlab-runner
+  become: true
+  command: gitlab-runner restart
+  register: gitlab_runner_restart
+  failed_when: gitlab_runner_restart.rc != 0 | bool

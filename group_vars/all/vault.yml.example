@@ -21,3 +21,13 @@ certbot_dns_linode_key: {{ op://homelab/linode-certbot-ansible/credential }}
 minio_endpoint: "192.168.10.11:9000"
 minio_access_key_id: {{ op://homelab/MinIO/Access Keys/access key }}
 minio_secret_access_key: {{ op://homelab/MinIO/Access Keys/secret access key }}
+
+gitlab_omniauth_providers: |
+  [
+    {
+      name: "GitHub",
+      app_id: "{{ op://homelab/github-omniauth-provider/username }}",
+      app_secret: "{{ op://homelab/github-omniauth-provider/credential }}",
+      args: { scope: "user:email" }
+    }
+  ]

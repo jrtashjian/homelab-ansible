@@ -48,10 +48,9 @@ fi
 sudo -u $SUDO_USER ansible-galaxy install -r requirements.yml
 
 # Retrieve *.int.jrtashjian.com wildcard certificate from 1Password
-if [ ! -f "files/int.jrtashjian.com.p12" ]; then
-    sudo -u $SUDO_USER op read "op://homelab/int.jrtashjian.com/int.jrtashjian.com.p12" -o files/int.jrtashjian.com.p12
-    sudo -u $SUDO_USER openssl pkcs12 -in files/int.jrtashjian.com.p12 -out files/fullchain.pem -clcerts -nokeys --legacy --passin pass:""
-    sudo -u $SUDO_USER openssl pkcs12 -in files/int.jrtashjian.com.p12 -out files/privkey.pem -nocerts -nodes --legacy --passin pass:""
+if [ ! -f "files/fullchain.pem" ] || [ ! -f "files/privkey.pem" ]; then
+    sudo -u $SUDO_USER op read "op://homelab/int.jrtashjian.com.fullchain.pem/int.jrtashjian.com.fullchain.pem" -o files/fullchain.pem --force
+    sudo -u $SUDO_USER op read "op://homelab/int.jrtashjian.com.privkey.pem/int.jrtashjian.com.privkey.pem" -o files/privkey.pem --force
 fi
 
 # Fetch secrets from 1Password and encrypt them with ansible-vault

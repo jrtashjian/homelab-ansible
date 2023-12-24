@@ -20,6 +20,20 @@ gitlab_object_store_connection: |
     'path_style' => true
   }
 
+gitlab_registry_storage: |
+ {
+  's3' => {
+    'accesskey' => '{{ minio_access_key_id }}',
+    'secretkey' => '{{ minio_secret_access_key }}',
+    'bucket' => 'gitlab-container-registry',
+    'region' => 'us-east-1',
+    'regionendpoint' => 'http://{{ minio_endpoint }}',
+  },
+  'redirect' => {
+    'disable' => false,
+  }
+ }
+
 gitlab_ldap_servers: |
   {
     'main' => {

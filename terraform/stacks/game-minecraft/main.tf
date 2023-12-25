@@ -8,28 +8,32 @@ locals {
     "proxy" = {
       cores        = 2
       memory       = 2048
-      ipv4_address = "192.168.10.50/24"
+      ipv4_address = "192.168.10.50"
+      ipv4_cidr    = "24"
       groups       = ["minecraft", "minecraft-proxies"]
       node         = "pve-node02"
     }
     "lobby" = {
       cores        = 2
       memory       = 2048
-      ipv4_address = "192.168.10.51/24"
+      ipv4_address = "192.168.10.51"
+      ipv4_cidr    = "24"
       groups       = ["minecraft", "minecraft-worlds"]
       node         = "pve-node03"
     }
     "main" = {
       cores        = 8
       memory       = 8192
-      ipv4_address = "192.168.10.52/24"
+      ipv4_address = "192.168.10.52"
+      ipv4_cidr    = "24"
       groups       = ["minecraft", "minecraft-worlds"]
       node         = "pve-node02"
     }
     "hardcore" = {
       cores        = 8
       memory       = 8192
-      ipv4_address = "192.168.10.53/24"
+      ipv4_address = "192.168.10.53"
+      ipv4_cidr    = "24"
       groups       = ["minecraft", "minecraft-worlds"]
       node         = "pve-node03"
     }
@@ -48,7 +52,8 @@ module "minecraft_lxc" {
   cpu    = each.value.cores
   memory = each.value.memory
 
-  ipv4_address = each.value.ipv4_address
+  ipv4_address = format("%s/%s", each.value.ipv4_address, each.value.ipv4_cidr)
+  ipv4_gateway = "192.168.10.1"
 
   ansible_pass       = var.ansible_pass
   ansible_public_key = var.ansible_public_key
@@ -63,7 +68,7 @@ resource "ansible_host" "minecraft_lxc" {
 
   variables = {
     ansible_ssh_user = "root"
-    ansible_host     = each.value.ipv4_address
+    ansible_host     = local.minecraft_lxc[each.key].ipv4_address
   }
 }
 

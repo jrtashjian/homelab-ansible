@@ -17,3 +17,4 @@
       - wget
       - htop
       - vim
+    update_cache: true

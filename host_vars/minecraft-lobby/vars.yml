@@ -1,8 +1,6 @@
 server_properties:
   allow-nether: "false"
   difficulty: "peaceful"
-  enforce-secure-profile: "false"
-  force-gamemode: "true"
   gamemode: "adventure"
   generate-structures: "false"
   level-type: "flat"
@@ -14,3 +12,7 @@ server_properties:
   spawn-monsters: "false"
   spawn-npcs: "false"
   view-distance: "3"
+
+bukkit:
+  settings:
+    allow-end: false

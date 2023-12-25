@@ -4,17 +4,39 @@ server_properties_defaults:
   broadcast-console-to-ops: "false"
   broadcast-rcon-to-ops: "false"
   enable-status: "false" # appear as offline, but still accept connections.
+  enforce-secure-profile: "false"
+  force-gamemode: "true"
   hide-online-players: "true" # player list is not sent on status requests.
   max-players: "15"
   online-mode: "false" # Prevent checking against Mojang servers.
-  white-list: "true"
-  enforce-whitelist: "true"
+  white-list: "false"
+  enforce-whitelist: "false"
 
-config_paper_global_defaults:
+paper_global_defaults:
   proxies:
     bungee-cord:
       online-mode: false
 
+paper_world_defaults:
+  chunks:
+    max-auto-save-chunks-per-tick: 8 # Reduces lag when there are many chunks to save.
+    prevent-moving-into-unloaded-chunks: true # Prevents players from moving into unloaded chunks.
+  collisions:
+    max-entity-collisions: 2 # Reduces lag when there are many entities in a small area.
+  environment:
+    optimize-explosions: true # Reduces lag when there are many explosions in a small area.
+  hopper:
+    disable-move-event: true # Reduces lag when there are many hoppers in a small area.
+    ignore-occluding-blocks: true # Reduces lag when there are many hoppers in a small area.
+  misc:
+    redstone-implementation: "EIGENCRAFT" # Reduces lag when there are many redstone circuits in a small area.
+
 spigot_defaults:
   settings:
     bungeecord: true
+  world-settings:
+    default:
+      max-entity-collisions: 8 # Reduces lag when there are many entities in a small area.
+      merge-radius:
+        item: 4 # Reduces lag when there are many items in a small area.
+        exp: 6 # Reduces lag when there are many orbs in a small area.

@@ -1,0 +1,5 @@
+server_properties:
+  difficulty: "normal"
+  motd: "Survival Server"
+  pvp: "false"
+  spawn-protection: "0"

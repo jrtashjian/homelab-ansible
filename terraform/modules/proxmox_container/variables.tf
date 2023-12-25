@@ -31,6 +31,11 @@ variable "ipv4_address" {
   type        = string
 }
 
+variable "ipv4_gateway" {
+  description = "The IPv4 gateway to assign to the LXC"
+  type        = string
+}
+
 variable "pool_id" {
   description = "The ID of the pool to add the LXC to"
   type        = string

@@ -10,6 +10,7 @@ terraform {
 resource "proxmox_virtual_environment_vm" "base_vm" {
   node_name = var.node_name
   name      = var.vm_name
+  pool_id   = var.pool_id
   tags      = ["terraform"]
 
   clone {

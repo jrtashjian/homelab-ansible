@@ -3,11 +3,17 @@ provider "proxmox" {
   insecure = true
 }
 
+resource "proxmox_virtual_environment_pool" "gitlab_pool" {
+  comment = "Managed by Terraform"
+  pool_id = "gitlab"
+}
+
 module "gitlab_vms" {
   source = "../../modules/proxmox_vm"
 
   node_name = "pve-node03"
   vm_name   = "gitlab"
+  pool_id   = proxmox_virtual_environment_pool.gitlab_pool.id
 
   cpu       = 4
   memory    = 8192
@@ -39,6 +45,7 @@ module "gitlab_runner_vms" {
 
   node_name = count.index % 2 == 0 ? "pve-node02" : "pve-node03"
   vm_name   = format("gitlab-runner%02d", count.index + 1)
+  pool_id   = proxmox_virtual_environment_pool.gitlab_pool.id
 
   cloudinit_template = "cloudinit-debian-12"
 

@@ -31,6 +31,12 @@ variable "disk_size" {
   default     = 8
 }
 
+variable "pool_id" {
+  description = "The ID of the pool to add the VM to"
+  type        = string
+  default     = ""
+}
+
 variable "ansible_user" {
   description = "Ansible user"
   type        = string

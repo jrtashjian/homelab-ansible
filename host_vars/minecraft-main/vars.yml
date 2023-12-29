@@ -1,3 +1,5 @@
+jvm_memory: "6G"
+
 server_properties:
   difficulty: "normal"
   motd: "Survival Server"

@@ -8,6 +8,7 @@ locals {
     "proxy" = {
       cores        = 2
       memory       = 2048
+      disk_size    = 8
       ipv4_address = "192.168.10.50"
       ipv4_cidr    = "24"
       groups       = ["minecraft", "minecraft-proxies"]
@@ -16,6 +17,7 @@ locals {
     "lobby" = {
       cores        = 2
       memory       = 2048
+      disk_size    = 8
       ipv4_address = "192.168.10.51"
       ipv4_cidr    = "24"
       groups       = ["minecraft", "minecraft-worlds"]
@@ -24,6 +26,7 @@ locals {
     "main" = {
       cores        = 8
       memory       = 8192
+      disk_size    = 32
       ipv4_address = "192.168.10.52"
       ipv4_cidr    = "24"
       groups       = ["minecraft", "minecraft-worlds"]
@@ -32,6 +35,7 @@ locals {
     "hardcore" = {
       cores        = 8
       memory       = 8192
+      disk_size    = 32
       ipv4_address = "192.168.10.53"
       ipv4_cidr    = "24"
       groups       = ["minecraft", "minecraft-worlds"]
@@ -51,6 +55,8 @@ module "minecraft_lxc" {
 
   cpu    = each.value.cores
   memory = each.value.memory
+
+  disk_size = each.value.disk_size
 
   ipv4_address = format("%s/%s", each.value.ipv4_address, each.value.ipv4_cidr)
   ipv4_gateway = "192.168.10.1"

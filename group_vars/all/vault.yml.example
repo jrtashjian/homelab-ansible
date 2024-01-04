@@ -6,7 +6,7 @@ terraform_user: {{ op://homelab/terraform-user/username }}
 terraform_pass: {{ op://homelab/terraform-user/password }}
 
 ldap_host: "dc.int.jrtashjian.com"
-ldap_port: 3890
+ldap_port: 6360
 ldap_bind_user: {{ op://homelab/LDAP bind_user/username }}
 ldap_bind_pass: {{ op://homelab/LDAP bind_user/password }}
 
@@ -25,7 +25,7 @@ minio_secret_access_key: {{ op://homelab/MinIO/Access Keys/secret access key }}
 gitlab_omniauth_providers: |
   [
     {
-      name: "GitHub",
+      name: "github",
       app_id: "{{ op://homelab/github-omniauth-provider/username }}",
       app_secret: "{{ op://homelab/github-omniauth-provider/credential }}",
       args: { scope: "user:email" }

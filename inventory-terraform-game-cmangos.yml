@@ -1,0 +1,3 @@
+plugin: cloud.terraform.terraform_provider
+project_path: terraform/stacks/game-cmangos
+state_file: "" # Must be empty for remote state

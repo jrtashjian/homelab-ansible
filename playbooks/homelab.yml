@@ -3,6 +3,11 @@
     - proxmox
     - common
 
+- hosts: cmangos
+  roles:
+    - common
+    - docker
+
 - hosts: docker
   roles:
     - docker

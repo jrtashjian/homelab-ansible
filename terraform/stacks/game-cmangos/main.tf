@@ -67,3 +67,56 @@ resource "proxmox_virtual_environment_pool" "cmangos_pool" {
   comment = "Managed by Terraform"
   pool_id = "game-cmangos"
 }
+
+resource "proxmox_virtual_environment_firewall_options" "cmangos_hosts" {
+  for_each = { for k, v in module.cmangos_hosts : k => v }
+
+  node_name    = module.cmangos_hosts[each.key].node_name
+  container_id = module.cmangos_hosts[each.key].id
+
+  enabled       = true
+  input_policy  = "DROP"
+  output_policy = "ACCEPT"
+
+  dhcp          = true
+  ndp           = true
+  radv          = false
+  macfilter     = true
+  ipfilter      = false
+  log_level_in  = "nolog"
+  log_level_out = "nolog"
+}
+
+resource "proxmox_virtual_environment_firewall_rules" "cmangos_hosts" {
+  for_each = { for k, v in module.cmangos_hosts : k => v }
+
+  node_name    = module.cmangos_hosts[each.key].node_name
+  container_id = module.cmangos_hosts[each.key].id
+
+  rule {
+    security_group = "ssh-server"
+    iface          = "net0"
+  }
+
+  rule {
+    type    = "in"
+    action  = "ACCEPT"
+    source  = "LAN"
+    comment = "Allow mangosd port"
+    dport   = "8085"
+    proto   = "tcp"
+    iface   = "net0"
+    log     = "info"
+  }
+
+  rule {
+    type    = "in"
+    action  = "ACCEPT"
+    source  = "LAN"
+    comment = "Allow realmd port"
+    dport   = "3724"
+    proto   = "tcp"
+    iface   = "net0"
+    log     = "info"
+  }
+}

@@ -40,6 +40,7 @@ module "gitlab_runner_vms" {
   source = "../../modules/proxmox_vm"
 
   count     = 5
+  cpu       = 4
   memory    = 2048
   disk_size = 16
 

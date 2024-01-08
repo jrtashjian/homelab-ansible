@@ -58,6 +58,10 @@ resource "proxmox_virtual_environment_container" "base_lxc" {
   }
 
   depends_on = [proxmox_virtual_environment_file.debian_container_template]
+
+  lifecycle {
+    ignore_changes = [description]
+  }
 }
 
 resource "proxmox_virtual_environment_file" "debian_container_template" {

@@ -6,7 +6,7 @@ provider "proxmox" {
 locals {
   cmangos_hosts = {
     "classic" = {
-      cores        = 4
+      cores        = 2
       memory       = 4096
       ipv4_address = "192.168.10.60"
       ipv4_cidr    = "24"
@@ -14,7 +14,7 @@ locals {
       node         = "pve-node02"
     }
     "tbc" = {
-      cores        = 4
+      cores        = 2
       memory       = 4096
       ipv4_address = "192.168.10.61"
       ipv4_cidr    = "24"
@@ -22,7 +22,7 @@ locals {
       node         = "pve-node03"
     }
     "wotlk" = {
-      cores        = 4
+      cores        = 2
       memory       = 4096
       ipv4_address = "192.168.10.62"
       ipv4_cidr    = "24"

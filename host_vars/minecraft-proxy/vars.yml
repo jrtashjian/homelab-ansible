@@ -26,18 +26,18 @@ config_yml:
       - floodgate.command.unlinkaccount
   servers:
     creative:
-      address: 192.168.10.54:25565
+      address: minecraft-creative.int.jrtashjian.com:25565
       motd: Creative Server
       restricted: false
     hardcore:
-      address: 192.168.10.53:25565
+      address: minecraft-hardcore.int.jrtashjian.com:25565
       motd: Hardcore Server
       restricted: false
     lobby:
-      address: 192.168.10.51:25565
+      address: minecraft-lobby.int.jrtashjian.com:25565
       motd: Server Lobby
       restricted: false
     survival:
-      address: 192.168.10.52:25565
+      address: minecraft-main.int.jrtashjian.com:25565
       motd: Survival Server
       restricted: false

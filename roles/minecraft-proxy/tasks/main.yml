@@ -55,13 +55,14 @@
         dest: /opt/minecraft/plugins/Geyser.jar,
       }
     - {
-        url: "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/bungee/build/libs/floodgate-bungee.jar",
+        url: "https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/bungee",
         dest: /opt/minecraft/plugins/floodgate.jar,
       }
-    - {
-        url: "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/database/sqlite/build/libs/floodgate-sqlite-database.jar",
-        dest: /opt/minecraft/plugins/floodgate/floodgate-sqlite-database.jar,
-      }
+    # TODO: Update download URL once GeyserMC Team fixes their release pipeline.
+    # - {
+    #     url: "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/database/sqlite/build/libs/floodgate-sqlite-database.jar",
+    #     dest: /opt/minecraft/plugins/floodgate/floodgate-sqlite-database.jar,
+    #   }
     - {
         url: "{{ request_advanced_portals.json.assets[0].browser_download_url }}",
         dest: /opt/minecraft/plugins/Advanced-Portals.jar,

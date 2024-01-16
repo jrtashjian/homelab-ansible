@@ -29,11 +29,13 @@ variable "disk_size" {
 variable "ipv4_address" {
   description = "The IPv4 address to assign to the LXC"
   type        = string
+  default     = "dhcp"
 }
 
 variable "ipv4_gateway" {
   description = "The IPv4 gateway to assign to the LXC"
   type        = string
+  default     = ""
 }
 
 variable "pool_id" {

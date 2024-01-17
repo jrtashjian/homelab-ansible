@@ -72,3 +72,63 @@ resource "proxmox_virtual_environment_pool" "minecraft_pool" {
   pool_id = "game-minecraft"
 }
 
+resource "proxmox_virtual_environment_firewall_options" "minecraft_worlds" {
+  for_each = { for k, v in module.minecraft_lxc : k => v }
+
+  node_name    = module.minecraft_lxc[each.key].node_name
+  container_id = module.minecraft_lxc[each.key].id
+
+  enabled       = true
+  input_policy  = "DROP"
+  output_policy = "ACCEPT"
+
+  dhcp          = true
+  ndp           = true
+  radv          = false
+  macfilter     = true
+  ipfilter      = false
+  log_level_in  = "nolog"
+  log_level_out = "nolog"
+}
+
+resource "proxmox_virtual_environment_firewall_rules" "minecraft_worlds" {
+  for_each = { for k, v in module.minecraft_lxc : k => v }
+
+  node_name    = module.minecraft_lxc[each.key].node_name
+  container_id = module.minecraft_lxc[each.key].id
+
+  rule {
+    security_group = "ssh-server"
+    iface          = "net0"
+  }
+
+  rule {
+    type    = "in"
+    action  = "ACCEPT"
+    source  = "LAN"
+    comment = "Allow Java Edition"
+    dport   = "25565"
+    proto   = "tcp"
+    iface   = "net0"
+  }
+
+  rule {
+    type    = "in"
+    action  = "ACCEPT"
+    source  = "LAN"
+    comment = "Allow Bedrock Edition (TCP)"
+    dport   = "19132:19133"
+    proto   = "tcp"
+    iface   = "net0"
+  }
+
+    rule {
+    type    = "in"
+    action  = "ACCEPT"
+    source  = "LAN"
+    comment = "Allow Bedrock Edition (UDP)"
+    dport   = "19132:19133"
+    proto   = "udp"
+    iface   = "net0"
+  }
+}

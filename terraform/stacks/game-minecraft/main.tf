@@ -6,32 +6,32 @@ provider "proxmox" {
 locals {
   minecraft_lxc = {
     "proxy" = {
-      cores        = 2
-      memory       = 2048
-      disk_size    = 8
-      groups       = ["minecraft", "minecraft-proxies"]
-      node         = "pve-node02"
+      cores     = 2
+      memory    = 2048
+      disk_size = 8
+      groups    = ["minecraft", "minecraft-proxies"]
+      node      = "pve-node02"
     }
     "lobby" = {
-      cores        = 2
-      memory       = 2048
-      disk_size    = 8
-      groups       = ["minecraft", "minecraft-worlds"]
-      node         = "pve-node03"
+      cores     = 2
+      memory    = 2048
+      disk_size = 8
+      groups    = ["minecraft", "minecraft-worlds"]
+      node      = "pve-node03"
     }
     "main" = {
-      cores        = 8
-      memory       = 8192
-      disk_size    = 32
-      groups       = ["minecraft", "minecraft-worlds"]
-      node         = "pve-node02"
+      cores     = 8
+      memory    = 8192
+      disk_size = 32
+      groups    = ["minecraft", "minecraft-worlds"]
+      node      = "pve-node02"
     }
     "hardcore" = {
-      cores        = 8
-      memory       = 8192
-      disk_size    = 32
-      groups       = ["minecraft", "minecraft-worlds"]
-      node         = "pve-node03"
+      cores     = 8
+      memory    = 8192
+      disk_size = 32
+      groups    = ["minecraft", "minecraft-worlds"]
+      node      = "pve-node03"
     }
   }
 }
@@ -92,7 +92,7 @@ resource "proxmox_virtual_environment_firewall_options" "minecraft_worlds" {
 }
 
 resource "proxmox_virtual_environment_firewall_rules" "minecraft_worlds" {
-  for_each = { for k, v in module.minecraft_lxc : k => v }
+  for_each = { for k, v in module.minecraft_lxc : k => v if contains(local.minecraft_lxc[k].groups, "minecraft-worlds") }
 
   node_name    = module.minecraft_lxc[each.key].node_name
   container_id = module.minecraft_lxc[each.key].id
@@ -111,23 +111,42 @@ resource "proxmox_virtual_environment_firewall_rules" "minecraft_worlds" {
     proto   = "tcp"
     iface   = "net0"
   }
+}
+
+resource "proxmox_virtual_environment_firewall_rules" "minecraft_proxies" {
+  for_each = { for k, v in module.minecraft_lxc : k => v if contains(local.minecraft_lxc[k].groups, "minecraft-proxies") }
+
+  node_name    = module.minecraft_lxc[each.key].node_name
+  container_id = module.minecraft_lxc[each.key].id
+
+  rule {
+    security_group = "ssh-server"
+    iface          = "net0"
+  }
 
   rule {
     type    = "in"
     action  = "ACCEPT"
-    source  = "LAN"
-    comment = "Allow Bedrock Edition (TCP)"
-    dport   = "19132:19133"
+    comment = "Allow Java Edition"
+    dport   = "25565"
     proto   = "tcp"
     iface   = "net0"
   }
 
-    rule {
+  rule {
     type    = "in"
     action  = "ACCEPT"
-    source  = "LAN"
+    comment = "Allow Bedrock Edition (TCP)"
+    dport   = "19132"
+    proto   = "tcp"
+    iface   = "net0"
+  }
+
+  rule {
+    type    = "in"
+    action  = "ACCEPT"
     comment = "Allow Bedrock Edition (UDP)"
-    dport   = "19132:19133"
+    dport   = "19132"
     proto   = "udp"
     iface   = "net0"
   }

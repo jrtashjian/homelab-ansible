@@ -8,24 +8,18 @@ locals {
     "classic" = {
       cores        = 2
       memory       = 4096
-      ipv4_address = "192.168.10.60"
-      ipv4_cidr    = "24"
       groups       = ["cmangos"]
       node         = "pve-node02"
     }
     "tbc" = {
       cores        = 2
       memory       = 4096
-      ipv4_address = "192.168.10.61"
-      ipv4_cidr    = "24"
       groups       = ["cmangos"]
       node         = "pve-node03"
     }
     "wotlk" = {
       cores        = 2
       memory       = 4096
-      ipv4_address = "192.168.10.62"
-      ipv4_cidr    = "24"
       groups       = ["cmangos"]
       node         = "pve-node03"
     }
@@ -44,9 +38,6 @@ module "cmangos_hosts" {
   cpu    = each.value.cores
   memory = each.value.memory
 
-  ipv4_address = format("%s/%s", each.value.ipv4_address, each.value.ipv4_cidr)
-  ipv4_gateway = "192.168.10.1"
-
   ansible_pass       = var.ansible_pass
   ansible_public_key = var.ansible_public_key
 }
@@ -59,7 +50,7 @@ resource "ansible_host" "cmangos_hosts" {
 
   variables = {
     ansible_ssh_user = "root"
-    ansible_host     = local.cmangos_hosts[each.key].ipv4_address
+    ansible_host     = "cmangos-${each.key}.int.jrtashjian.com"
   }
 }
 

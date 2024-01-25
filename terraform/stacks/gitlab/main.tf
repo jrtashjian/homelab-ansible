@@ -40,8 +40,8 @@ module "gitlab_runner_vms" {
   source = "../../modules/proxmox_vm"
 
   count     = 5
-  cpu       = 4
-  memory    = 2048
+  cpu       = 6
+  memory    = 4096
   disk_size = 16
 
   node_name = count.index % 2 == 0 ? "pve-node02" : "pve-node03"

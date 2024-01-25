@@ -67,6 +67,18 @@ resource "proxmox_virtual_environment_network_linux_bridge" "vmbr0" {
   vlan_aware = true
 }
 
+# Create DMZ VLAN.
+resource "proxmox_virtual_environment_network_linux_vlan" "dmz" {
+  for_each = local.pve_nodes
+
+  node_name = each.key
+  name      = "vlan_dmz"
+
+  interface = "vmbr0"
+  vlan      = 66
+  comment   = "DMZ"
+}
+
 # Create a Linux bridge for the storage network.
 resource "proxmox_virtual_environment_network_linux_bridge" "vmbr1" {
   for_each  = local.pve_nodes

@@ -63,6 +63,8 @@ resource "proxmox_virtual_environment_network_linux_bridge" "vmbr0" {
   ports   = ["eno2"]
   address = each.value["vmbr0"]
   gateway = "192.168.10.1"
+
+  vlan_aware = true
 }
 
 # Create a Linux bridge for the storage network.

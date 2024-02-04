@@ -97,6 +97,11 @@ resource "proxmox_virtual_environment_firewall_alias" "lan_network" {
   cidr    = "192.168.10.0/24"
   comment = "Managed by Terraform"
 }
+resource "proxmox_virtual_environment_firewall_alias" "dmz_network" {
+  name    = "DMZ"
+  cidr    = "192.168.66.0/24"
+  comment = "Managed by Terraform"
+}
 resource "proxmox_virtual_environment_firewall_alias" "opt1_network" {
   name    = "OPT1"
   cidr    = "192.168.20.0/24"

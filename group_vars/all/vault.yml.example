@@ -5,7 +5,7 @@ ansible_user: {{ op://homelab/ansible-user/username }}
 terraform_user: {{ op://homelab/terraform-user/username }}
 terraform_pass: {{ op://homelab/terraform-user/password }}
 
-ldap_host: "dc.int.jrtashjian.com"
+ldap_host: "ldap.int.jrtashjian.com"
 ldap_base_dn: "dc=int,dc=jrtashjian,dc=com"
 ldap_admin_user: "{{ op://homelab/ldap-admin-user/username }}"
 ldap_admin_pass: "{{ op://homelab/ldap-admin-user/password }}"

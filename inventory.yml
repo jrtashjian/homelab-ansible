@@ -8,3 +8,8 @@ all:
         pve-node01.int.jrtashjian.com:
         pve-node02.int.jrtashjian.com:
         pve-node03.int.jrtashjian.com:
+
+    ldap:
+      hosts:
+        ldap.int.jrtashjian.com:
+          ansible_ssh_user: root

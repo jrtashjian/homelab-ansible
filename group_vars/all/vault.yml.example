@@ -6,9 +6,14 @@ terraform_user: {{ op://homelab/terraform-user/username }}
 terraform_pass: {{ op://homelab/terraform-user/password }}
 
 ldap_host: "dc.int.jrtashjian.com"
-ldap_port: 6360
-ldap_bind_user: {{ op://homelab/LDAP bind_user/username }}
-ldap_bind_pass: {{ op://homelab/LDAP bind_user/password }}
+ldap_base_dn: "dc=int,dc=jrtashjian,dc=com"
+ldap_admin_user: "{{ op://homelab/ldap-admin-user/username }}"
+ldap_admin_pass: "{{ op://homelab/ldap-admin-user/password }}"
+ldap_bind_user: "{{ op://homelab/ldap-bind-user/username }}"
+ldap_bind_pass: "{{ op://homelab/ldap-bind-user/password }}"
+
+lldap_jwt_secret: "{{ op://homelab/lldap-jwt-secret/password }}"
+lldap_key_seed: "{{ op://homelab/lldap-key-seed/password }}"
 
 smtp_host: {{ op://homelab/smtp_server/server }}
 smtp_port: {{ op://homelab/smtp_server/SMTP/port number }}

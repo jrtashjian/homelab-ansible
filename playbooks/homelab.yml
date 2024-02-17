@@ -27,3 +27,24 @@
     - common
     - certbot
     - gitlab
+
+- hosts: ldap
+  roles:
+    - common
+    - lldap
+  pre_tasks:
+    - name: Create SSL certificate directory
+      ansible.builtin.file:
+        path: /etc/lldap/certs
+        state: directory
+        mode: '0755'
+    - name: Create SSL certificate
+      ansible.builtin.copy:
+        content: "{{ cluster_ssl_certificate }}"
+        dest: /etc/lldap/certs/fullchain.pem
+        mode: '0644'
+    - name: Create SSL certificate key
+      ansible.builtin.copy:
+        content: "{{ cluster_ssl_certificate_key }}"
+        dest: /etc/lldap/certs/privkey.pem
+        mode: '0644'

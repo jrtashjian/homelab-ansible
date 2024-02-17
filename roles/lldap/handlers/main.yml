@@ -1,0 +1,9 @@
+- name: restart lldap_service
+  command: systemctl restart lldap
+  register: lldap_restart
+  failed_when: lldap_restart.rc != 0 | bool
+
+- name: Restart Nginx
+  ansible.builtin.service:
+    name: nginx
+    state: restarted

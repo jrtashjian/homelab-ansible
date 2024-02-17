@@ -1,0 +1,40 @@
+- name: Install required dependencies.
+  ansible.builtin.apt:
+    name:
+      - ca-certificates
+      - curl
+      - gnupg
+      - lsb-release
+    state: present
+
+- name: Add GPG key for OpenSUSE repository
+  ansible.builtin.apt_key:
+    url: https://download.opensuse.org/repositories/home:Masgalor:LLDAP/Debian_12/Release.key
+    state: present
+
+- name: Add OpenSUSE repository for lldap
+  ansible.builtin.apt_repository:
+    repo: deb http://download.opensuse.org/repositories/home:/Masgalor:/LLDAP/Debian_12/ /
+    state: present
+    update_cache: true
+
+- name: Install lldap package
+  apt:
+    name: lldap
+    state: present
+
+- name: Copy lldap configuration file.
+  template:
+    src: etc/lldap/lldap_config.toml.j2
+    dest: /etc/lldap/lldap_config.toml
+  notify:
+    - restart lldap_service
+    - Restart Nginx
+
+- name: Enable lldap service at boot.
+  ansible.builtin.service:
+    name: lldap
+    state: started
+    enabled: true
+
+- import_tasks: proxy.yml

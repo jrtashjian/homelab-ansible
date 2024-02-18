@@ -26,6 +26,11 @@ terraform {
       source  = "ansible/ansible"
       version = "1.1.0"
     }
+
+    minio = {
+      source  = "aminueza/minio"
+      version = "2.0.1"
+    }
   }
 
   required_version = ">= 1.6"

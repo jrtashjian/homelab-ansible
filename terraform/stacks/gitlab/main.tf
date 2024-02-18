@@ -3,6 +3,10 @@ provider "proxmox" {
   insecure = true
 }
 
+provider "minio" {
+  minio_server = "192.168.10.11:9000"
+}
+
 resource "proxmox_virtual_environment_pool" "gitlab_pool" {
   comment = "Managed by Terraform"
   pool_id = "gitlab"
@@ -65,4 +69,41 @@ resource "ansible_host" "gitlab_runner_vms" {
   variables = {
     ansible_host = each.value
   }
+}
+
+
+resource "minio_s3_bucket" "gitlab_artifacts" {
+  bucket = "gitlab-artifacts"
+}
+
+resource "minio_s3_bucket" "gitlab_ci_secure_files" {
+  bucket = "gitlab-ci-secure-files"
+}
+
+resource "minio_s3_bucket" "gitlab_dependency_proxy" {
+  bucket = "gitlab-dependency-proxy"
+}
+
+resource "minio_s3_bucket" "gitlab_external_diffs" {
+  bucket = "gitlab-external-diffs"
+}
+
+resource "minio_s3_bucket" "gitlab_lfs" {
+  bucket = "gitlab-lfs"
+}
+
+resource "minio_s3_bucket" "gitlab_packages" {
+  bucket = "gitlab-packages"
+}
+
+resource "minio_s3_bucket" "gitlab_pages" {
+  bucket = "gitlab-pages"
+}
+
+resource "minio_s3_bucket" "gitlab_terraform_state" {
+  bucket = "gitlab-terraform-state"
+}
+
+resource "minio_s3_bucket" "gitlab_uploads" {
+  bucket = "gitlab-uploads"
 }

@@ -48,3 +48,24 @@
         content: "{{ cluster_ssl_certificate_key }}"
         dest: /etc/lldap/certs/privkey.pem
         mode: '0644'
+
+- hosts: sso
+  roles:
+    - common
+    - authelia
+  pre_tasks:
+    - name: Create SSL certificate directory
+      ansible.builtin.file:
+        path: /etc/authelia/certs
+        state: directory
+        mode: '0755'
+    - name: Create SSL certificate
+      ansible.builtin.copy:
+        content: "{{ cluster_ssl_certificate }}"
+        dest: /etc/authelia/certs/fullchain.pem
+        mode: '0644'
+    - name: Create SSL certificate key
+      ansible.builtin.copy:
+        content: "{{ cluster_ssl_certificate_key }}"
+        dest: /etc/authelia/certs/privkey.pem
+        mode: '0644'

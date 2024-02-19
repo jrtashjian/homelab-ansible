@@ -1,0 +1,39 @@
+- name: Install required dependencies.
+  ansible.builtin.apt:
+    name:
+      - ca-certificates
+      - curl
+      - gnupg
+      - lsb-release
+    state: present
+
+- name: Add GPG key for Authelia repository
+  ansible.builtin.apt_key:
+    url: https://apt.authelia.com/organization/signing.asc
+    state: present
+
+- name: Add Authelia repository for authelia
+  ansible.builtin.apt_repository:
+    repo: deb https://apt.authelia.com/stable/debian/debian/ all main
+    state: present
+    update_cache: true
+
+- name: Install authelia package
+  apt:
+    name: authelia
+    state: present
+
+- name: Copy authelia configuration file.
+  template:
+    src: etc/authelia/configuration.yml.j2
+    dest: /etc/authelia/configuration.yml
+  notify:
+    - restart authelia_service
+
+- name: Create service
+  template:
+    src: etc/systemd/system/authelia.service.j2
+    dest: /etc/systemd/system/authelia.service
+    owner: root
+    group: root
+  notify: start authelia_service

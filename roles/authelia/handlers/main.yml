@@ -1,0 +1,11 @@
+- name: restart authelia_service
+  command: systemctl restart authelia
+  register: authelia_restart
+  failed_when: authelia_restart.rc != 0 | bool
+
+- name: start authelia_service
+  become: true
+  service:
+    name: authelia
+    state: started
+    enabled: yes

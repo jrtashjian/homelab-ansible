@@ -13,3 +13,8 @@ all:
       hosts:
         ldap.int.jrtashjian.com:
           ansible_ssh_user: root
+
+    sso:
+      hosts:
+        sso.int.jrtashjian.com:
+          ansible_ssh_user: root

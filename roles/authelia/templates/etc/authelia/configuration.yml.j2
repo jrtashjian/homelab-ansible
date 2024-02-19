@@ -25,7 +25,7 @@ jwt_secret: {{ authelia_jwt_secret }}
 ## in such a case.
 ##
 ## Note: this parameter is optional. If not provided, user won't be redirected upon successful authentication.
-default_redirection_url: "https://{{ ansible_fqdn }}"
+default_redirection_url: "https://{{ authelia_fqdn }}"
 
 ## Set the default 2FA method for new users and for when a user has a preferred method configured that has been
 ## disabled. This setting must be a method that is enabled.
@@ -165,7 +165,7 @@ totp:
   disable: false
 
   ## The issuer name displayed in the Authenticator application of your choice.
-  issuer: jrtashjian.com
+  issuer: {{ domain }}
 
   ## The TOTP algorithm to use.
   ## It is CRITICAL you read the documentation before changing this option:
@@ -203,7 +203,7 @@ webauthn:
   timeout: 60s
 
   ## The display name the browser should show the user for when using Webauthn to login/register.
-  display_name: jrtashjian.com
+  display_name: {{ domain }}
 
   ## Conveyance preference controls if we collect the attestation statement including the AAGUID from the device.
   ## Options are none, indirect, direct.
@@ -517,7 +517,7 @@ access_control:
 
   rules:
     ## Rules applied to everyone
-    - domain: 'jrtashjian.com'
+    - domain: '{{ domain }}'
       policy: bypass
 
     ## Domain Regex examples. Generally we recommend just using a standard domain.
@@ -603,7 +603,7 @@ session:
   ## The domain to protect.
   ## Note: the authenticator must also be in that domain.
   ## If empty, the cookie is restricted to the subdomain of the issuer.
-  domain: jrtashjian.com
+  domain: {{ domain }}
 
   ## Sets the Cookie SameSite value. Possible options are none, lax, or strict.
   ## Please read https://www.authelia.com/c/session#same_site

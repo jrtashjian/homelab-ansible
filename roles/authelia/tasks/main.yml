@@ -27,8 +27,7 @@
   template:
     src: etc/authelia/configuration.yml.j2
     dest: /etc/authelia/configuration.yml
-  notify:
-    - restart authelia_service
+  notify: restart authelia
 
 - name: Create service
   template:
@@ -36,4 +35,4 @@
     dest: /etc/systemd/system/authelia.service
     owner: root
     group: root
-  notify: start authelia_service
+  notify: start authelia

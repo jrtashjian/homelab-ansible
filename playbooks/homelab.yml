@@ -53,6 +53,7 @@
   roles:
     - common
     - authelia
+    - cloudflared
   pre_tasks:
     - name: Create SSL certificate directory
       ansible.builtin.file:

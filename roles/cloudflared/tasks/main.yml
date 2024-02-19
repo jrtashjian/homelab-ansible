@@ -1,0 +1,12 @@
+- name: Download cloudflared
+  get_url:
+    url: "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb"
+    dest: "/tmp/cloudflared.deb"
+
+- name: Install cloudflared
+  apt:
+    deb: "/tmp/cloudflared.deb"
+    state: present
+
+- name: Install Cloudflared as a service
+  command: cloudflared service install {{ cloudflared_token }}

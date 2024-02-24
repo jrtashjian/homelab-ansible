@@ -18,3 +18,8 @@ all:
       hosts:
         sso.int.jrtashjian.com:
           ansible_ssh_user: root
+
+    netbird:
+      hosts:
+        netbird.jrtashjian.com:
+          ansible_ssh_user: root

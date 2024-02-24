@@ -52,7 +52,7 @@
 - hosts: sso
   roles:
     - common
-    - authelia
+    # - authelia
     - cloudflared
   pre_tasks:
     - name: Create SSL certificate directory
@@ -70,3 +70,8 @@
         content: "{{ cluster_ssl_certificate_key }}"
         dest: /etc/authelia/certs/privkey.pem
         mode: '0644'
+
+- hosts: netbird
+  roles:
+    - common
+    - docker

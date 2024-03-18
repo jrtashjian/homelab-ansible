@@ -56,3 +56,13 @@ gitlab_ldap_servers: |
       },
     }
   }
+
+gitlab_omniauth_providers: |
+  [
+    {
+      name: "github",
+      app_id: "{{ lookup('community.general.onepassword', 'github-omniauth-provider', field='username', vault=op_vault) }}",
+      app_secret: "{{ lookup('community.general.onepassword', 'github-omniauth-provider', field='credential', vault=op_vault) }}",
+      args: { scope: "user:email" }
+    }
+  ]

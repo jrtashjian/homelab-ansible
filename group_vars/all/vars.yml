@@ -1,8 +1,34 @@
-onepassword_vault: homelab
+op_vault: homelab
 
 domain: "jrtashjian.com"
 domain_internal: "int.{{ domain }}"
 authelia_fqdn: "sso.{{ domain }}"
 
-cluster_ssl_certificate: "{{ lookup('file', '../files/fullchain.pem') }}"
-cluster_ssl_certificate_key: "{{ lookup('file', '../files/privkey.pem') }}"
+cluster_ssl_certificate: "{{ lookup('community.general.onepassword_doc', 'int.jrtashjian.com.fullchain', vault=op_vault) }}"
+cluster_ssl_certificate_key: "{{ lookup('community.general.onepassword_doc', 'int.jrtashjian.com.privkey', vault=op_vault) }}"
+
+ansible_become_pass: "{{ lookup('community.general.onepassword', 'ansible-user', field='password', vault=op_vault) }}"
+ansible_public_key_new: "{{ lookup('community.general.onepassword', 'ansible-ssh', field='public_key', vault=op_vault) }}"
+ansible_user: "{{ lookup('community.general.onepassword', 'ansible-user', field='username', vault=op_vault) }}"
+
+terraform_user: "{{ lookup('community.general.onepassword', 'terraform-user', field='username', vault=op_vault) }}"
+terraform_pass: "{{ lookup('community.general.onepassword', 'terraform-user', field='password', vault=op_vault) }}"
+
+ldap_host: "ldap.int.jrtashjian.com"
+ldap_base_dn: "dc=int,dc=jrtashjian,dc=com"
+ldap_admin_user: "{{ lookup('community.general.onepassword', 'ldap-admin-user', field='username', vault=op_vault) }}"
+ldap_admin_pass: "{{ lookup('community.general.onepassword', 'ldap-admin-user', field='password', vault=op_vault) }}"
+ldap_bind_user: "{{ lookup('community.general.onepassword', 'ldap-bind-user', field='username', vault=op_vault) }}"
+ldap_bind_pass: "{{ lookup('community.general.onepassword', 'ldap-bind-user', field='password', vault=op_vault) }}"
+
+lldap_jwt_secret: "{{ lookup('community.general.onepassword', 'lldap-jwt-secret', field='password', vault=op_vault) }}"
+lldap_key_seed: "{{ lookup('community.general.onepassword', 'lldap-key-seed', field='password', vault=op_vault) }}"
+
+smtp_host: "{{ lookup('community.general.onepassword', 'smtp_server', field='pop_server', vault=op_vault) }}"
+smtp_port: "{{ lookup('community.general.onepassword', 'smtp_server', field='smtp_port', vault=op_vault) }}"
+smtp_user: "{{ lookup('community.general.onepassword', 'smtp_server', field='pop_username', vault=op_vault) }}"
+smtp_pass: "{{ lookup('community.general.onepassword', 'smtp_server', field='pop_password', vault=op_vault) }}"
+
+minio_endpoint: "192.168.10.11:9000"
+minio_access_key_id: "{{ lookup('community.general.onepassword', 'minio-admin-user', field='access key', vault=op_vault) }}"
+minio_secret_access_key: "{{ lookup('community.general.onepassword', 'minio-admin-user', field='secret access key', vault=op_vault) }}"

@@ -13,4 +13,4 @@
 
 - name: Install Cloudflared as a service
   command: cloudflared service install {{ cloudflared_token }}
-  when: ansible_facts.services['cloudflared.service'].state != 'running'
+  when: ansible_facts.services['cloudflared.service'] is not defined

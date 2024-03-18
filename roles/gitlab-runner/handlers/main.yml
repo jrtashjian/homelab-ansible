@@ -1,4 +1,4 @@
-- name: restart gitlab-runner
+- name: restart gitlab_runner
   become: true
   command: gitlab-runner restart
   register: gitlab_runner_restart

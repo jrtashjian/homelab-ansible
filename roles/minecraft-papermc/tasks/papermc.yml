@@ -1,7 +1,7 @@
 # https://github.com/PaperMC/Paper
 - name: Determine latest PaperMC build
   ansible.builtin.uri:
-    url: https://papermc.io/api/v2/projects/paper/versions/1.20.4/builds
+    url: https://papermc.io/api/v2/projects/paper/versions/1.20.6/builds
   register: request_papermc
 
 - name: Download server files

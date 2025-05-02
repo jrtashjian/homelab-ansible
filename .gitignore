@@ -1,5 +1,5 @@
 .ansible-vault-password
 ansible_collections/
 cache/
-files/
+/files
 vault.yml

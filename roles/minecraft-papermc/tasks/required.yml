@@ -1,5 +1,16 @@
 # Install JDK with https://docs.papermc.io/misc/java-install#ubuntudebian
 
+- name: Add GPG key for Corretto repository
+  ansible.builtin.apt_key:
+    url: https://apt.corretto.aws/corretto.key
+    state: present
+
+- name: Add Corretto repository
+  ansible.builtin.apt_repository:
+    repo: deb https://apt.corretto.aws stable main
+    state: present
+    update_cache: true
+
 - name: Update and upgrade apt packages
   apt:
     update_cache: yes
@@ -15,21 +26,6 @@
       - git
       - build-essential
     state: present
-
-- name: Add GPG key for Corretto repository
-  ansible.builtin.apt_key:
-    url: https://apt.corretto.aws/corretto.key
-    state: present
-
-- name: Add Corretto repository
-  ansible.builtin.apt_repository:
-    repo: deb https://apt.corretto.aws stable main
-    state: present
-    update_cache: true
-
-- name: Update apt cache after adding Corretto repository
-  ansible.builtin.apt:
-    update_cache: yes
 
 - name: Install Java 21 and dependencies
   ansible.builtin.apt:

@@ -16,6 +16,8 @@ paper_global_defaults:
   proxies:
     bungee-cord:
       online-mode: false
+    velocity:
+      enabled: true
 
 paper_world_defaults:
   chunks:
@@ -33,7 +35,7 @@ paper_world_defaults:
 
 spigot_defaults:
   settings:
-    bungeecord: true
+    bungeecord: false
   world-settings:
     default:
       max-entity-collisions: 8 # Reduces lag when there are many entities in a small area.

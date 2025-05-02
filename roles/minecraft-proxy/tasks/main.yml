@@ -28,17 +28,19 @@
     path: /opt/minecraft/plugins/floodgate
     state: directory
 
-# https://github.com/PaperMC/Waterfall
-- name: Determine latest Waterfall build
+# https://papermc.io/software/velocity
+- name: Determine latest Velocity build
   uri:
-    url: https://papermc.io/api/v2/projects/waterfall/version_group/1.20/builds
-  register: request_waterfall
+    url: https://api.papermc.io/v2/projects/velocity/version_group/3.0.0/builds
+  register: request_velocity
 
-# https://github.com/sekwah41/Advanced-Portals
-- name: Determine latest Advanced Portals build
-  uri:
-    url: https://api.github.com/repos/sekwah41/Advanced-Portals/releases/latest
-  register: request_advanced_portals
+- name: Stop minecraft-proxy service
+  become: true
+  ansible.builtin.service:
+    name: minecraft-proxy
+    state: stopped
+  ignore_errors: yes
+  tags: reconfigure
 
 - name: Download server files
   become: true
@@ -47,37 +49,83 @@
     dest: "{{ item.dest }}"
   loop:
     - {
-        url: "https://papermc.io/api/v2/projects/waterfall/versions/{{ request_waterfall.json.builds[-1].version }}/builds/{{ request_waterfall.json.builds[-1].build }}/downloads/{{ request_waterfall.json.builds[-1].downloads.application.name }}",
-        dest: /opt/minecraft/waterfall.jar,
+        url: "https://api.papermc.io/v2/projects/velocity/versions/{{ request_velocity.json.builds[-1].version }}/builds/{{ request_velocity.json.builds[-1].build }}/downloads/{{ request_velocity.json.builds[-1].downloads.application.name }}",
+        dest: /opt/minecraft/velocity.jar,
       }
     - {
-        url: "https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/bungeecord",
+        # https://geysermc.org/download?project=geyser
+        url: "https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/velocity",
         dest: /opt/minecraft/plugins/Geyser.jar,
       }
     - {
-        url: "https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/bungee",
+        # https://geysermc.org/download?project=floodgate
+        url: "https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/velocity",
         dest: /opt/minecraft/plugins/floodgate.jar,
       }
-    # TODO: Update download URL once GeyserMC Team fixes their release pipeline.
-    # - {
-    #     url: "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/database/sqlite/build/libs/floodgate-sqlite-database.jar",
-    #     dest: /opt/minecraft/plugins/floodgate/floodgate-sqlite-database.jar,
-    #   }
     - {
-        url: "{{ request_advanced_portals.json.assets[0].browser_download_url }}",
+        url: "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/fix-weird-via-issue/lastSuccessfulBuild/artifact/database/sqlite/build/libs/floodgate-sqlite-database.jar",
+        dest: /opt/minecraft/plugins/floodgate/floodgate-sqlite-database.jar,
+      }
+    - {
+        # https://github.com/sekwah41/Advanced-Portals
+        url: "https://cdn.modrinth.com/data/axTqSWQA/versions/I8wYnsdu/Advanced-Portals-Spigot-2.5.0.jar",
         dest: /opt/minecraft/plugins/Advanced-Portals.jar,
       }
   notify: restart minecraft-proxy
   when: not ansible_check_mode
 
-- name: Update *.yml configuration
+- name: Update *.toml configuration
   ansible.builtin.copy:
     dest: "/opt/minecraft/{{ item.path }}"
-    content: "{{ lookup('file', 'opt/minecraft/' + item.path) | from_yaml | combine(vars[item.key + '_defaults'], recursive=True) | combine(vars[item.key], recursive=True) | to_nice_yaml }}"
+    content: "{{ lookup('file', 'opt/minecraft/' + item.path) }}"
   loop:
-    - { key: "config_yml", path: "config.yml" }
-    - { key: "waterfall_yml", path: "waterfall.yml" }
+    - { key: "velocity_toml", path: "velocity.toml" }
   notify: restart minecraft-proxy
+
+- name: Remove sections in velocity.toml
+  ansible.builtin.ini_file:
+    path: /opt/minecraft/velocity.toml
+    section: "{{ item }}"
+    state: absent
+  loop:
+    - servers
+    - forced-hosts
+
+- name: Update velocity.toml
+  ansible.builtin.ini_file:
+    path: /opt/minecraft/velocity.toml
+    section: null
+    option: "{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present
+  with_dict: "{{ velocity }}"
+  when: "velocity | length > 0"
+
+- name: Update servers section in velocity.toml
+  ansible.builtin.ini_file:
+    path: /opt/minecraft/velocity.toml
+    section: servers
+    option: "{{ item.key }}"
+    value: "\"{{ item.value }}\""
+    state: present
+  with_dict: "{{ velocity_servers }}"
+  when: "velocity_servers | length > 0"
+
+- name: Add 'try' option to servers section in velocity.toml
+  ansible.builtin.ini_file:
+    path: /opt/minecraft/velocity.toml
+    section: servers
+    option: "try"
+    value: "[\"{{ velocity_servers.keys() | list | first }}\"]"
+    state: present
+  when: "velocity_servers | length > 0"
+
+- name: Re-add forced-hosts in velocity.toml
+  ansible.builtin.ini_file:
+    path: /opt/minecraft/velocity.toml
+    section: forced-hosts
+    allow_no_value: true
+    state: present
 
 - name: Create service
   become: true

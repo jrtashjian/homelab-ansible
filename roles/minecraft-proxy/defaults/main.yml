@@ -16,3 +16,7 @@ config_yml: [] # intended to be used at the host level
 # See files/opt/minecraft/waterfall.yml for options.
 waterfall_yml_defaults: [] # intended to be used at the group level
 waterfall_yml: [] # intended to be used at the host level
+
+# See files/opt/minecraft/velocity.toml for options.
+velocity: []
+velocity_servers: []

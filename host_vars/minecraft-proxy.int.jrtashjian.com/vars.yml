@@ -41,3 +41,13 @@ config_yml:
       address: minecraft-main.int.jrtashjian.com:25565
       motd: Survival Server
       restricted: false
+
+velocity:
+  online-mode: "false"
+  show-max-players: 15
+
+velocity_servers:
+  lobby: "minecraft-lobby.int.jrtashjian.com:25565"
+  survival: "minecraft-main.int.jrtashjian.com:25565"
+  hardcore: "minecraft-hardcore.int.jrtashjian.com:25565"
+  creative: "minecraft-creative.int.jrtashjian.com:25565"

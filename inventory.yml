@@ -22,4 +22,19 @@ all:
     netbird:
       hosts:
         netbird.jrtashjian.com:
-          ansible_ssh_user: root
+
+    minecraft:
+      children:
+        minecraft-proxies:
+          hosts:
+            minecraft-proxy.int.jrtashjian.com:
+              ansible_ssh_user: root
+
+        minecraft-worlds:
+          hosts:
+            minecraft-lobby.int.jrtashjian.com:
+              ansible_ssh_user: root
+            minecraft-main.int.jrtashjian.com:
+              ansible_ssh_user: root
+            minecraft-hardcore.int.jrtashjian.com:
+              ansible_ssh_user: root

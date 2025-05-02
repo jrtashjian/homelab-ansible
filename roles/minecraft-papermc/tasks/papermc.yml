@@ -1,14 +1,22 @@
 # https://github.com/PaperMC/Paper
 - name: Determine latest PaperMC build
   ansible.builtin.uri:
-    url: https://papermc.io/api/v2/projects/paper/versions/1.20.6/builds
+    url: https://api.papermc.io/v2/projects/paper/versions/1.21.5/builds
   register: request_papermc
+
+- name: Stop minecraft service
+  become: true
+  ansible.builtin.service:
+    name: minecraft
+    state: stopped
+  ignore_errors: yes
 
 - name: Download server files
   ansible.builtin.get_url:
-    url: "https://papermc.io/api/v2/projects/paper/versions/{{ request_papermc.json.version }}/builds/{{ request_papermc.json.builds[-1].build }}/downloads/{{ request_papermc.json.builds[-1].downloads.application.name }}"
+    url: "https://api.papermc.io/v2/projects/paper/versions/{{ request_papermc.json.version }}/builds/{{ request_papermc.json.builds[-1].build }}/downloads/{{ request_papermc.json.builds[-1].downloads.application.name }}"
     dest: "/opt/minecraft/paper.jar"
     force: true
+  notify: restart minecraft
   when: not ansible_check_mode
 
 - name: Update eula.txt

@@ -18,17 +18,14 @@
     shell: /bin/bash
 
 # Directory Structure
-- name: Create plugins directory
+- name: Create required directories
   become: true
   ansible.builtin.file:
-    path: /opt/minecraft/plugins
+    path: "{{ item }}"
     state: directory
-
-- name: Create plugins/floodgate directory
-  become: true
-  ansible.builtin.file:
-    path: /opt/minecraft/plugins/floodgate
-    state: directory
+  loop:
+    - /opt/minecraft/plugins
+    - /opt/minecraft/plugins/floodgate
 
 # Server Software
 - name: Determine latest Velocity build
@@ -39,25 +36,25 @@
   retries: 3
   delay: 5
 
-- name: Stop minecraft-proxy service
+- name: Stop minecraft-proxy service before updating files (if running)
   become: true
   ansible.builtin.service:
     name: minecraft-proxy
     state: stopped
   ignore_errors: yes
 
-- name: Download server files
+- name: Download server and plugin files
   become: true
   ansible.builtin.get_url:
     url: "{{ item.url }}"
     dest: "{{ item.dest }}"
     force: yes
   loop:
-    - { url: "https://api.papermc.io/v2/projects/velocity/versions/{{ request_velocity.json.builds[-1].version }}/builds/{{ request_velocity.json.builds[-1].build }}/downloads/{{ request_velocity.json.builds[-1].downloads.application.name }}", dest: /opt/minecraft/velocity.jar } # https://papermc.io/software/velocity
-    - { url: "https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/velocity", dest: /opt/minecraft/plugins/Geyser.jar } # https://geysermc.org/download?project=geyser
-    - { url: "https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/velocity", dest: /opt/minecraft/plugins/floodgate.jar } # https://geysermc.org/download?project=floodgate
-    - { url: "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/fix-weird-via-issue/lastSuccessfulBuild/artifact/database/sqlite/build/libs/floodgate-sqlite-database.jar", dest: /opt/minecraft/plugins/floodgate/floodgate-sqlite-database.jar } # https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/fix-weird-via-issue/
-    - { url: "https://cdn.modrinth.com/data/axTqSWQA/versions/I8wYnsdu/Advanced-Portals-Spigot-2.5.0.jar", dest: /opt/minecraft/plugins/Advanced-Portals.jar } # https://github.com/sekwah41/Advanced-Portals
+    - { url: "https://api.papermc.io/v2/projects/velocity/versions/{{ request_velocity.json.builds[-1].version }}/builds/{{ request_velocity.json.builds[-1].build }}/downloads/{{ request_velocity.json.builds[-1].downloads.application.name }}", dest: /opt/minecraft/velocity.jar }
+    - { url: "https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/velocity", dest: /opt/minecraft/plugins/Geyser.jar }
+    - { url: "https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/velocity", dest: /opt/minecraft/plugins/floodgate.jar }
+    - { url: "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/fix-weird-via-issue/lastSuccessfulBuild/artifact/database/sqlite/build/libs/floodgate-sqlite-database.jar", dest: /opt/minecraft/plugins/floodgate/floodgate-sqlite-database.jar }
+    - { url: "https://cdn.modrinth.com/data/axTqSWQA/versions/I8wYnsdu/Advanced-Portals-Spigot-2.5.0.jar", dest: /opt/minecraft/plugins/Advanced-Portals.jar }
   notify: restart minecraft-proxy
   when: not ansible_check_mode
   register: download_result
@@ -66,61 +63,46 @@
   until: download_result is success
 
 # Configuration
-- name: Update *.toml configuration
-  ansible.builtin.copy:
-    dest: "/opt/minecraft/{{ item.path }}"
-    content: "{{ lookup('file', 'opt/minecraft/' + item.path) }}"
-    owner: minecraft
-    group: minecraft
-    mode: '0644'
-  loop:
-    - { key: "velocity_toml", path: "velocity.toml" }
-  notify: restart minecraft-proxy
+- name: Configure velocity.toml
+  become: true
+  block:
+    - name: Copy default velocity.toml template
+      ansible.builtin.template:
+        src: velocity.toml.j2
+        dest: /opt/minecraft/velocity.toml
+      notify: restart minecraft-proxy
 
-- name: Remove sections in velocity.toml
-  ansible.builtin.ini_file:
-    path: /opt/minecraft/velocity.toml
-    section: "{{ item }}"
-    state: absent
-  loop:
-    - servers
-    - forced-hosts
+    - name: Update servers section in velocity.toml
+      ansible.builtin.ini_file:
+        path: /opt/minecraft/velocity.toml
+        section: servers
+        option: "{{ item.key }}"
+        value: "\"{{ item.value }}\""
+        state: present
+      with_dict: "{{ velocity_servers | default({}) }}"
+      when: velocity_servers is defined and velocity_servers | length > 0
+      notify: restart minecraft-proxy
 
-- name: Update velocity.toml base configuration
-  ansible.builtin.ini_file:
-    path: /opt/minecraft/velocity.toml
-    section: null
-    option: "{{ item.key }}"
-    value: "{{ item.value }}"
-    state: present
-  with_dict: "{{ velocity }}"
-  when: "velocity is defined and velocity | length > 0"
+    - name: Add 'try' option to servers section in velocity.toml
+      ansible.builtin.ini_file:
+        path: /opt/minecraft/velocity.toml
+        section: servers
+        option: "try"
+        value: "[\"{{ velocity_servers.keys() | list | first }}\"]"
+        state: present
+      when: velocity_servers is defined and velocity_servers | length > 0
+      notify: restart minecraft-proxy
 
-- name: Update servers section in velocity.toml
-  ansible.builtin.ini_file:
-    path: /opt/minecraft/velocity.toml
-    section: servers
-    option: "{{ item.key }}"
-    value: "\"{{ item.value }}\""
-    state: present
-  with_dict: "{{ velocity_servers }}"
-  when: "velocity_servers is defined and velocity_servers | length > 0"
-
-- name: Add 'try' option to servers section in velocity.toml
-  ansible.builtin.ini_file:
-    path: /opt/minecraft/velocity.toml
-    section: servers
-    option: "try"
-    value: "[\"{{ velocity_servers.keys() | list | first }}\"]"
-    state: present
-  when: "velocity_servers is defined and velocity_servers | length > 0"
-
-- name: Re-add forced-hosts in velocity.toml
-  ansible.builtin.ini_file:
-    path: /opt/minecraft/velocity.toml
-    section: forced-hosts
-    allow_no_value: true
-    state: present
+    - name: Configure forced-hosts in velocity.toml
+      ansible.builtin.ini_file:
+        path: /opt/minecraft/velocity.toml
+        section: forced-hosts
+        option: "{{ item.key }}"
+        value: "\"{{ item.value }}\""
+        state: present
+      with_dict: "{{ velocity_forced_hosts | default({}) }}"
+      when: velocity_forced_hosts is defined and velocity_forced_hosts | length > 0
+      notify: restart minecraft-proxy
 
 # Service Setup
 - name: Create systemd service
@@ -131,8 +113,8 @@
     owner: root
     group: root
     mode: '0644'
-  notify: start minecraft-proxy
   register: service_file
+  notify: restart minecraft-proxy
 
 - name: Reload systemd daemon if service file was updated
   become: true
@@ -149,3 +131,11 @@
     owner: minecraft
     group: minecraft
     mode: '0755'
+
+- name: Enable and start minecraft-proxy service
+  become: true
+  ansible.builtin.service:
+    name: minecraft-proxy
+    enabled: yes
+    state: started
+  when: not ansible_check_mode

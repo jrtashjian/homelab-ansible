@@ -132,6 +132,13 @@
     group: root
     mode: '0644'
   notify: start minecraft-proxy
+  register: service_file
+
+- name: Reload systemd daemon if service file was updated
+  become: true
+  ansible.builtin.systemd:
+    daemon_reload: yes
+  when: service_file.changed
 
 - name: Set appropriate ownership for Minecraft directory
   become: true

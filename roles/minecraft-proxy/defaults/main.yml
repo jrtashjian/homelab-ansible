@@ -9,6 +9,8 @@ jvm_flags:
   - "-XX:+AlwaysPreTouch"
   - "-XX:MaxInlineLevel=15"
 
-# See files/opt/minecraft/velocity.toml for options.
-velocity: []
-velocity_servers: []
+proxy_motd: "<#09add3>A Velocity Server"
+proxy_online_mode: false
+proxy_max_players: 15
+
+minecraft_servers: []

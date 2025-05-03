@@ -63,46 +63,12 @@
   until: download_result is success
 
 # Configuration
-- name: Configure velocity.toml
+- name: Configure Velocity
   become: true
-  block:
-    - name: Copy default velocity.toml template
-      ansible.builtin.template:
-        src: velocity.toml.j2
-        dest: /opt/minecraft/velocity.toml
-      notify: restart minecraft-proxy
-
-    - name: Update servers section in velocity.toml
-      ansible.builtin.ini_file:
-        path: /opt/minecraft/velocity.toml
-        section: servers
-        option: "{{ item.key }}"
-        value: "\"{{ item.value }}\""
-        state: present
-      with_dict: "{{ velocity_servers | default({}) }}"
-      when: velocity_servers is defined and velocity_servers | length > 0
-      notify: restart minecraft-proxy
-
-    - name: Add 'try' option to servers section in velocity.toml
-      ansible.builtin.ini_file:
-        path: /opt/minecraft/velocity.toml
-        section: servers
-        option: "try"
-        value: "[\"{{ velocity_servers.keys() | list | first }}\"]"
-        state: present
-      when: velocity_servers is defined and velocity_servers | length > 0
-      notify: restart minecraft-proxy
-
-    - name: Configure forced-hosts in velocity.toml
-      ansible.builtin.ini_file:
-        path: /opt/minecraft/velocity.toml
-        section: forced-hosts
-        option: "{{ item.key }}"
-        value: "\"{{ item.value }}\""
-        state: present
-      with_dict: "{{ velocity_forced_hosts | default({}) }}"
-      when: velocity_forced_hosts is defined and velocity_forced_hosts | length > 0
-      notify: restart minecraft-proxy
+  ansible.builtin.template:
+    src: opt/minecraft/velocity.toml.j2
+    dest: /opt/minecraft/velocity.toml
+  notify: restart minecraft-proxy
 
 # Service Setup
 - name: Create systemd service

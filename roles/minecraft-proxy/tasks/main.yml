@@ -26,6 +26,8 @@
   loop:
     - /opt/minecraft/plugins
     - /opt/minecraft/plugins/floodgate
+  tags:
+    - permissions
 
 # Server Software
 - name: Determine latest Velocity build
@@ -35,6 +37,8 @@
   failed_when: request_velocity.status != 200
   retries: 3
   delay: 5
+  tags:
+    - software_update
 
 - name: Stop minecraft-proxy service before updating files (if running)
   become: true
@@ -42,6 +46,8 @@
     name: minecraft-proxy
     state: stopped
   ignore_errors: yes
+  tags:
+    - software_update
 
 - name: Download server and plugin files
   become: true
@@ -61,6 +67,8 @@
   retries: 3
   delay: 5
   until: download_result is success
+  tags:
+    - software_update
 
 # Configuration
 - name: Configure Velocity
@@ -69,6 +77,8 @@
     src: opt/minecraft/velocity.toml.j2
     dest: /opt/minecraft/velocity.toml
   notify: restart minecraft-proxy
+  tags:
+    - config_update
 
 # Service Setup
 - name: Create systemd service
@@ -81,12 +91,16 @@
     mode: '0644'
   register: service_file
   notify: restart minecraft-proxy
+  tags:
+    - config_update
 
 - name: Reload systemd daemon if service file was updated
   become: true
   ansible.builtin.systemd:
     daemon_reload: yes
   when: service_file.changed
+  tags:
+    - config_update
 
 - name: Set appropriate ownership for Minecraft directory
   become: true
@@ -97,6 +111,8 @@
     owner: minecraft
     group: minecraft
     mode: '0755'
+  tags:
+    - permissions
 
 - name: Enable and start minecraft-proxy service
   become: true
@@ -105,3 +121,6 @@
     enabled: yes
     state: started
   when: not ansible_check_mode
+  tags:
+    - software_update
+    - config_update

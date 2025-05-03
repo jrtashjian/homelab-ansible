@@ -1,6 +1,7 @@
-- name: install minecraft server requirements
+# System Prerequisites
+- name: Install Minecraft server dependencies
   become: true
-  apt:
+  ansible.builtin.apt:
     state: present
     update_cache: yes
     package:
@@ -8,7 +9,7 @@
       - build-essential
       - openjdk-17-jre-headless
 
-- name: add the user 'minecraft'
+- name: Create Minecraft system user
   become: true
   ansible.builtin.user:
     name: minecraft
@@ -16,23 +17,27 @@
     home: /opt/minecraft
     shell: /bin/bash
 
-- name: create plugins directory
+# Directory Structure
+- name: Create plugins directory
   become: true
   ansible.builtin.file:
     path: /opt/minecraft/plugins
     state: directory
 
-- name: create plugins/floodgate directory
+- name: Create plugins/floodgate directory
   become: true
   ansible.builtin.file:
     path: /opt/minecraft/plugins/floodgate
     state: directory
 
-# https://papermc.io/software/velocity
+# Server Software
 - name: Determine latest Velocity build
-  uri:
+  ansible.builtin.uri:
     url: https://api.papermc.io/v2/projects/velocity/version_group/3.0.0/builds
   register: request_velocity
+  failed_when: request_velocity.status != 200
+  retries: 3
+  delay: 5
 
 - name: Stop minecraft-proxy service
   become: true
@@ -40,44 +45,34 @@
     name: minecraft-proxy
     state: stopped
   ignore_errors: yes
-  tags: reconfigure
 
 - name: Download server files
   become: true
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ item.url }}"
     dest: "{{ item.dest }}"
+    force: yes
   loop:
-    - {
-        url: "https://api.papermc.io/v2/projects/velocity/versions/{{ request_velocity.json.builds[-1].version }}/builds/{{ request_velocity.json.builds[-1].build }}/downloads/{{ request_velocity.json.builds[-1].downloads.application.name }}",
-        dest: /opt/minecraft/velocity.jar,
-      }
-    - {
-        # https://geysermc.org/download?project=geyser
-        url: "https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/velocity",
-        dest: /opt/minecraft/plugins/Geyser.jar,
-      }
-    - {
-        # https://geysermc.org/download?project=floodgate
-        url: "https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/velocity",
-        dest: /opt/minecraft/plugins/floodgate.jar,
-      }
-    - {
-        url: "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/fix-weird-via-issue/lastSuccessfulBuild/artifact/database/sqlite/build/libs/floodgate-sqlite-database.jar",
-        dest: /opt/minecraft/plugins/floodgate/floodgate-sqlite-database.jar,
-      }
-    - {
-        # https://github.com/sekwah41/Advanced-Portals
-        url: "https://cdn.modrinth.com/data/axTqSWQA/versions/I8wYnsdu/Advanced-Portals-Spigot-2.5.0.jar",
-        dest: /opt/minecraft/plugins/Advanced-Portals.jar,
-      }
+    - { url: "https://api.papermc.io/v2/projects/velocity/versions/{{ request_velocity.json.builds[-1].version }}/builds/{{ request_velocity.json.builds[-1].build }}/downloads/{{ request_velocity.json.builds[-1].downloads.application.name }}", dest: /opt/minecraft/velocity.jar } # https://papermc.io/software/velocity
+    - { url: "https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/velocity", dest: /opt/minecraft/plugins/Geyser.jar } # https://geysermc.org/download?project=geyser
+    - { url: "https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/velocity", dest: /opt/minecraft/plugins/floodgate.jar } # https://geysermc.org/download?project=floodgate
+    - { url: "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/fix-weird-via-issue/lastSuccessfulBuild/artifact/database/sqlite/build/libs/floodgate-sqlite-database.jar", dest: /opt/minecraft/plugins/floodgate/floodgate-sqlite-database.jar } # https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/fix-weird-via-issue/
+    - { url: "https://cdn.modrinth.com/data/axTqSWQA/versions/I8wYnsdu/Advanced-Portals-Spigot-2.5.0.jar", dest: /opt/minecraft/plugins/Advanced-Portals.jar } # https://github.com/sekwah41/Advanced-Portals
   notify: restart minecraft-proxy
   when: not ansible_check_mode
+  register: download_result
+  retries: 3
+  delay: 5
+  until: download_result is success
 
+# Configuration
 - name: Update *.toml configuration
   ansible.builtin.copy:
     dest: "/opt/minecraft/{{ item.path }}"
     content: "{{ lookup('file', 'opt/minecraft/' + item.path) }}"
+    owner: minecraft
+    group: minecraft
+    mode: '0644'
   loop:
     - { key: "velocity_toml", path: "velocity.toml" }
   notify: restart minecraft-proxy
@@ -91,7 +86,7 @@
     - servers
     - forced-hosts
 
-- name: Update velocity.toml
+- name: Update velocity.toml base configuration
   ansible.builtin.ini_file:
     path: /opt/minecraft/velocity.toml
     section: null
@@ -99,7 +94,7 @@
     value: "{{ item.value }}"
     state: present
   with_dict: "{{ velocity }}"
-  when: "velocity | length > 0"
+  when: "velocity is defined and velocity | length > 0"
 
 - name: Update servers section in velocity.toml
   ansible.builtin.ini_file:
@@ -109,7 +104,7 @@
     value: "\"{{ item.value }}\""
     state: present
   with_dict: "{{ velocity_servers }}"
-  when: "velocity_servers | length > 0"
+  when: "velocity_servers is defined and velocity_servers | length > 0"
 
 - name: Add 'try' option to servers section in velocity.toml
   ansible.builtin.ini_file:
@@ -118,7 +113,7 @@
     option: "try"
     value: "[\"{{ velocity_servers.keys() | list | first }}\"]"
     state: present
-  when: "velocity_servers | length > 0"
+  when: "velocity_servers is defined and velocity_servers | length > 0"
 
 - name: Re-add forced-hosts in velocity.toml
   ansible.builtin.ini_file:
@@ -127,16 +122,18 @@
     allow_no_value: true
     state: present
 
-- name: Create service
+# Service Setup
+- name: Create systemd service
   become: true
   template:
     src: etc/systemd/system/minecraft-proxy.service.j2
     dest: /etc/systemd/system/minecraft-proxy.service
     owner: root
     group: root
+    mode: '0644'
   notify: start minecraft-proxy
 
-- name: give 'minecraft' user ownership
+- name: Set appropriate ownership for Minecraft directory
   become: true
   ansible.builtin.file:
     path: /opt/minecraft
@@ -144,3 +141,4 @@
     recurse: yes
     owner: minecraft
     group: minecraft
+    mode: '0755'

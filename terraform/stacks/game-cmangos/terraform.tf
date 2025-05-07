@@ -19,14 +19,14 @@ terraform {
   required_providers {
     proxmox = {
       source  = "bpg/proxmox"
-      version = "0.43.3"
+      version = "0.77.1"
     }
 
     ansible = {
       source  = "ansible/ansible"
-      version = "1.1.0"
+      version = "1.3.0"
     }
   }
 
-  required_version = ">= 1.6"
+  required_version = ">= 1.11"
 }

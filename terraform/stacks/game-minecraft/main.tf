@@ -28,7 +28,7 @@ locals {
     }
     "hardcore" = {
       cores     = 8
-      memory    = 8192
+      memory    = 16384
       disk_size = 32
       groups    = ["minecraft", "minecraft-worlds"]
       node      = "pve-node03"

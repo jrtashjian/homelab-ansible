@@ -1,5 +1,7 @@
 eula_accept: "true"
 
+proxy_online_mode: true
+
 server_properties_defaults:
   broadcast-console-to-ops: "false"
   broadcast-rcon-to-ops: "false"
@@ -18,6 +20,7 @@ paper_global_defaults:
       online-mode: false
     velocity:
       enabled: true
+      online-mode: true
 
 paper_world_defaults:
   chunks:
@@ -32,6 +35,8 @@ paper_world_defaults:
     ignore-occluding-blocks: true # Reduces lag when there are many hoppers in a small area.
   misc:
     redstone-implementation: "EIGENCRAFT" # Reduces lag when there are many redstone circuits in a small area.
+  unsupported-settings:
+    allow-piston-duplication: true # Allow duplication of TNT, carpets, and rails.
 
 spigot_defaults:
   settings:

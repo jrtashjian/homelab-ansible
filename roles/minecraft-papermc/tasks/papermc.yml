@@ -1,23 +1,51 @@
-# https://github.com/PaperMC/Paper
+# Directory Structure
+- name: Create required directories
+  become: true
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - /opt/minecraft/config
+    - /opt/minecraft/plugins
+  tags:
+    - permissions
+
+# Server Software
 - name: Determine latest PaperMC build
   ansible.builtin.uri:
     url: https://api.papermc.io/v2/projects/paper/versions/1.21.5/builds
   register: request_papermc
+  failed_when: request_papermc.status != 200
+  retries: 3
+  delay: 5
+  tags:
+    - software_update
 
-- name: Stop minecraft service
+- name: Stop minecraft service before updating files (if running)
   become: true
   ansible.builtin.service:
     name: minecraft
     state: stopped
   ignore_errors: yes
+  tags:
+    - software_update
 
-- name: Download server files
+- name: Download server and plugin files
+  become: true
   ansible.builtin.get_url:
-    url: "https://api.papermc.io/v2/projects/paper/versions/{{ request_papermc.json.version }}/builds/{{ request_papermc.json.builds[-1].build }}/downloads/{{ request_papermc.json.builds[-1].downloads.application.name }}"
-    dest: "/opt/minecraft/paper.jar"
-    force: true
+    url: "{{ item.url }}"
+    dest: "{{ item.dest }}"
+    force: yes
+  loop:
+    - { url: "https://api.papermc.io/v2/projects/paper/versions/{{ request_papermc.json.version }}/builds/{{ request_papermc.json.builds[-1].build }}/downloads/{{ request_papermc.json.builds[-1].downloads.application.name }}", dest: /opt/minecraft/paper.jar }
   notify: restart minecraft
   when: not ansible_check_mode
+  register: download_result
+  retries: 3
+  delay: 5
+  until: download_result is success
+  tags:
+    - software_update
 
 - name: Update eula.txt
   ansible.builtin.ini_file:
@@ -42,6 +70,8 @@
   with_dict: "{{ server_properties_defaults | combine(server_properties, recursive=True) }}"
   when: "server_properties | length > 0"
   notify: restart minecraft
+  tags:
+    - config_update
 
 - name: Update player permissions
   ansible.builtin.copy:
@@ -53,11 +83,8 @@
     # - { dest: /opt/minecraft/banned-ips.json, content: "{{ banned_ips }}" }
     # - { dest: /opt/minecraft/banned-players.json, content: "{{ banned_players }}" }
   notify: restart minecraft
-
-- name: Create /opt/minecraft/config directory
-  ansible.builtin.file:
-    path: /opt/minecraft/config
-    state: directory
+  tags:
+    - config_update
 
 - name: Update *.yml configuration
   ansible.builtin.copy:
@@ -70,3 +97,5 @@
     - { key: "spigot", path: "spigot.yml" }
     - { key: "commands", path: "commands.yml" }
   notify: restart minecraft
+  tags:
+    - config_update

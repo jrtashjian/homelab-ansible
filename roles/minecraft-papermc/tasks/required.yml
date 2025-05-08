@@ -11,32 +11,23 @@
     state: present
     update_cache: true
 
-- name: Update and upgrade apt packages
-  apt:
-    update_cache: yes
-    upgrade: dist
-
-- name: Install required tools
+- name: Install Minecraft server dependencies
   ansible.builtin.apt:
-    name:
+    state: present
+    update_cache: yes
+    package:
       - ca-certificates
       - apt-transport-https
       - gnupg
       - wget
       - git
       - build-essential
-    state: present
-
-- name: Install Java 21 and dependencies
-  ansible.builtin.apt:
-    name:
       - java-21-amazon-corretto-jdk
       - libxi6
       - libxtst6
       - libxrender1
-    state: present
 
-- name: add the user 'minecraft'
+- name: Create Minecraft system user
   ansible.builtin.user:
     name: minecraft
     system: yes

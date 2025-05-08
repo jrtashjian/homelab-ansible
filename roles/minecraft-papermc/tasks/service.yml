@@ -1,13 +1,21 @@
-- name: Check if service exists
-  ansible.builtin.stat:
-    path: /etc/systemd/system/minecraft.service
-  register: minecraft_service
-
-- name: Create service if it doesn't exist
+# Service Setup
+- name: Create systemd service
+  become: true
   ansible.builtin.template:
     src: etc/systemd/system/minecraft.service.j2
     dest: /etc/systemd/system/minecraft.service
     owner: root
     group: root
-  notify: start minecraft
-  when: not minecraft_service.stat.exists
+    mode: '0644'
+  register: service_file
+  notify: restart minecraft
+  tags:
+    - config_update
+
+- name: Reload systemd daemon if service file was updated
+  become: true
+  ansible.builtin.systemd:
+    daemon_reload: yes
+  when: service_file.changed
+  tags:
+    - config_update

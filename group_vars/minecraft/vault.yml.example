@@ -1,15 +1,61 @@
 ops:
-  - uuid: {{ op://homelab/aoqqi62qevnnknf4yxlowxvbb4/uuid }}
-    name: {{ op://homelab/aoqqi62qevnnknf4yxlowxvbb4/name }}
-    level: 4
-  - uuid: {{ op://homelab/d5pw2hmqi2agfbtg3g4xqauuxm/uuid }}
-    name: {{ op://homelab/d5pw2hmqi2agfbtg3g4xqauuxm/name }}
-    level: 4
+  # op get 7dxqkh6ib6b6lvvedqiqamr7ti
+  - uuid: {{ op://homelab/7dxqkh6ib6b6lvvedqiqamr7ti/java_uuid }}
+    name: {{ op://homelab/7dxqkh6ib6b6lvvedqiqamr7ti/java_name }}
+    level: {{ op://homelab/7dxqkh6ib6b6lvvedqiqamr7ti/op_level }}
+  - uuid: {{ op://homelab/7dxqkh6ib6b6lvvedqiqamr7ti/bedrock_uuid }}
+    name: {{ op://homelab/7dxqkh6ib6b6lvvedqiqamr7ti/bedrock_name }}
+    level: {{ op://homelab/7dxqkh6ib6b6lvvedqiqamr7ti/op_level }}
 
 whitelist:
-  - uuid: {{ op://homelab/aoqqi62qevnnknf4yxlowxvbb4/uuid }}
-    name: {{ op://homelab/aoqqi62qevnnknf4yxlowxvbb4/name }}
-  - uuid: {{ op://homelab/d5pw2hmqi2agfbtg3g4xqauuxm/uuid }}
-    name: {{ op://homelab/d5pw2hmqi2agfbtg3g4xqauuxm/name }}
-  - uuid: {{ op://homelab/5cuqox6dwe3cabbbzutf4zewtu/uuid }}
-    name: {{ op://homelab/5cuqox6dwe3cabbbzutf4zewtu/name }}
+  # op get 7dxqkh6ib6b6lvvedqiqamr7ti
+  - uuid: {{ op://homelab/7dxqkh6ib6b6lvvedqiqamr7ti/java_uuid }}
+    name: {{ op://homelab/7dxqkh6ib6b6lvvedqiqamr7ti/java_name }}
+  - uuid: {{ op://homelab/7dxqkh6ib6b6lvvedqiqamr7ti/bedrock_uuid }}
+    name: {{ op://homelab/7dxqkh6ib6b6lvvedqiqamr7ti/bedrock_name }}
+
+  # op get q6qylbjblz6yy7ylxxhxvahq3q
+  - uuid: {{ op://homelab/q6qylbjblz6yy7ylxxhxvahq3q/bedrock_uuid }}
+    name: {{ op://homelab/q6qylbjblz6yy7ylxxhxvahq3q/bedrock_name }}
+
+  # op get imq6zcewoq6ut3aojzzwbexjsu
+  - uuid: {{ op://homelab/imq6zcewoq6ut3aojzzwbexjsu/java_uuid }}
+    name: {{ op://homelab/imq6zcewoq6ut3aojzzwbexjsu/java_name }}
+  - uuid: {{ op://homelab/imq6zcewoq6ut3aojzzwbexjsu/bedrock_uuid }}
+    name: {{ op://homelab/imq6zcewoq6ut3aojzzwbexjsu/bedrock_name }}
+
+  # op get b2zinvmrql7n3vcrhgeb3h4vfy
+  - uuid: {{ op://homelab/b2zinvmrql7n3vcrhgeb3h4vfy/java_uuid }}
+    name: {{ op://homelab/b2zinvmrql7n3vcrhgeb3h4vfy/java_name }}
+  - uuid: {{ op://homelab/b2zinvmrql7n3vcrhgeb3h4vfy/bedrock_uuid }}
+    name: {{ op://homelab/b2zinvmrql7n3vcrhgeb3h4vfy/bedrock_name }}
+
+  # op get 6woa43p36bhcq77gxzf7b3dfle
+  - uuid: {{ op://homelab/6woa43p36bhcq77gxzf7b3dfle/java_uuid }}
+    name: {{ op://homelab/6woa43p36bhcq77gxzf7b3dfle/java_name }}
+
+  # op get pn3apde6iagtnog3hovubgrufy
+  - uuid: {{ op://homelab/pn3apde6iagtnog3hovubgrufy/java_uuid }}
+    name: {{ op://homelab/pn3apde6iagtnog3hovubgrufy/java_name }}
+  - uuid: {{ op://homelab/pn3apde6iagtnog3hovubgrufy/bedrock_uuid }}
+    name: {{ op://homelab/pn3apde6iagtnog3hovubgrufy/bedrock_name }}
+
+  # op get sux3osalyqxwsb5ughh2bcepiy
+  - uuid: {{ op://homelab/sux3osalyqxwsb5ughh2bcepiy/bedrock_uuid }}
+    name: {{ op://homelab/sux3osalyqxwsb5ughh2bcepiy/bedrock_name }}
+
+  # op get jskbo276vtfdwah3o7kgi4kj7i
+  - uuid: {{ op://homelab/jskbo276vtfdwah3o7kgi4kj7i/bedrock_uuid }}
+    name: {{ op://homelab/jskbo276vtfdwah3o7kgi4kj7i/bedrock_name }}
+
+  # op get tshfduu4cok2n5ldb5vczr2dgy
+  - uuid: {{ op://homelab/tshfduu4cok2n5ldb5vczr2dgy/bedrock_uuid }}
+    name: {{ op://homelab/tshfduu4cok2n5ldb5vczr2dgy/bedrock_name }}
+
+  # op get da3pqnz2ofhj3wxf2pmsy4sp3u
+  - uuid: {{ op://homelab/da3pqnz2ofhj3wxf2pmsy4sp3u/bedrock_uuid }}
+    name: {{ op://homelab/da3pqnz2ofhj3wxf2pmsy4sp3u/bedrock_name }}
+
+  # op get eku6rc3xpfgmfimyh6ztfx4dyu
+  - uuid: {{ op://homelab/eku6rc3xpfgmfimyh6ztfx4dyu/bedrock_uuid }}
+    name: {{ op://homelab/eku6rc3xpfgmfimyh6ztfx4dyu/bedrock_name }}

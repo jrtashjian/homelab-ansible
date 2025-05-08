@@ -1,4 +1,4 @@
-jvm_memory: "6G"
+jvm_memory: "10G"
 
 server_properties:
   difficulty: "hard"

@@ -1,0 +1,2 @@
+vfio_pci_ids:
+  - 10de:1bb3 # Nvidia Tesla P4

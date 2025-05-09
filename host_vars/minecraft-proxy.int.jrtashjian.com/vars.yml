@@ -1,5 +1,10 @@
-minecraft_servers:
-  lobby: "minecraft-lobby.int.jrtashjian.com:25565"
-  survival: "minecraft-main.int.jrtashjian.com:25565"
-  hardcore: "minecraft-hardcore.int.jrtashjian.com:25565"
-  creative: "minecraft-creative.int.jrtashjian.com:25565"
+minecraft_servers: |
+  {% set servers = {} %}
+  {% for world in groups['minecraft-worlds'] %}
+  {% set index = world.split('.')[0].replace('minecraft-', '') %}
+  {% if index == "main" %}
+  {% set index = "survival" %}
+  {% endif %}
+  {% set servers = servers.update({index: world + ":25565"}) %}
+  {% endfor %}
+  {{ servers }}

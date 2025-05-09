@@ -79,7 +79,7 @@
     content: "{{ item.content | to_json }}"
   loop:
     - { dest: /opt/minecraft/ops.json, content: "{{ ops }}" }
-    # - { dest: /opt/minecraft/whitelist.json, content: "{{ whitelist }}" }
+    - { dest: /opt/minecraft/whitelist.json, content: "{{ whitelist }}" }
     # - { dest: /opt/minecraft/banned-ips.json, content: "{{ banned_ips }}" }
     # - { dest: /opt/minecraft/banned-players.json, content: "{{ banned_players }}" }
   notify: restart minecraft

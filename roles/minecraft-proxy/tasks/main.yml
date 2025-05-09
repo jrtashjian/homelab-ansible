@@ -113,6 +113,7 @@
     mode: '0755'
   tags:
     - permissions
+    - config_update
 
 - name: Enable and start minecraft-proxy service
   become: true

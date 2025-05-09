@@ -57,10 +57,10 @@
     force: yes
   loop:
     - { url: "https://api.papermc.io/v2/projects/velocity/versions/{{ request_velocity.json.builds[-1].version }}/builds/{{ request_velocity.json.builds[-1].build }}/downloads/{{ request_velocity.json.builds[-1].downloads.application.name }}", dest: /opt/minecraft/velocity.jar }
+    - { url: "https://download.luckperms.net/1576/velocity/LuckPerms-Velocity-5.4.159.jar", dest: /opt/minecraft/plugins/LuckPerms.jar }
     - { url: "https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/velocity", dest: /opt/minecraft/plugins/Geyser.jar }
     - { url: "https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/velocity", dest: /opt/minecraft/plugins/floodgate.jar }
     - { url: "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/fix-weird-via-issue/lastSuccessfulBuild/artifact/database/sqlite/build/libs/floodgate-sqlite-database.jar", dest: /opt/minecraft/plugins/floodgate/floodgate-sqlite-database.jar }
-    - { url: "https://cdn.modrinth.com/data/axTqSWQA/versions/I8wYnsdu/Advanced-Portals-Spigot-2.5.0.jar", dest: /opt/minecraft/plugins/Advanced-Portals.jar }
   notify: restart minecraft-proxy
   when: not ansible_check_mode
   register: download_result

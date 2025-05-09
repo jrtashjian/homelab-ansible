@@ -38,6 +38,10 @@
     force: yes
   loop:
     - { url: "https://api.papermc.io/v2/projects/paper/versions/{{ request_papermc.json.version }}/builds/{{ request_papermc.json.builds[-1].build }}/downloads/{{ request_papermc.json.builds[-1].downloads.application.name }}", dest: /opt/minecraft/paper.jar }
+    - { url: "https://download.luckperms.net/1576/bukkit/loader/LuckPerms-Bukkit-5.4.159.jar", dest: /opt/minecraft/plugins/LuckPerms.jar }
+    - { url: "https://cdn.modrinth.com/data/axTqSWQA/versions/I8wYnsdu/Advanced-Portals-Spigot-2.5.0.jar", dest: /opt/minecraft/plugins/Advanced-Portals.jar }
+    - { url: "https://github.com/EssentialsX/Essentials/releases/download/2.21.0/EssentialsX-2.21.0.jar", dest: /opt/minecraft/plugins/EssentialsX.jar }
+    - { url: "https://github.com/EssentialsX/Essentials/releases/download/2.21.0/EssentialsXSpawn-2.21.0.jar", dest: /opt/minecraft/plugins/EssentialsXSpawn.jar }
   notify: restart minecraft
   when: not ansible_check_mode
   register: download_result

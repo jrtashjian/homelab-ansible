@@ -19,8 +19,8 @@ module "gitlab_vms" {
   vm_name   = "gitlab"
   pool_id   = proxmox_virtual_environment_pool.gitlab_pool.id
 
-  cpu       = 4
-  memory    = 8192
+  cpu       = 8
+  memory    = 16384
   disk_size = 32
 
   cloudinit_template = "cloudinit-debian-12"
@@ -46,7 +46,7 @@ module "gitlab_runner_vms" {
   count     = 5
   cpu       = 6
   memory    = 4096
-  disk_size = 16
+  disk_size = 32
 
   node_name = count.index % 2 == 0 ? "pve-node02" : "pve-node03"
   vm_name   = format("gitlab-runner%02d", count.index + 1)

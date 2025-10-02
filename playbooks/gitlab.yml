@@ -1,47 +1,19 @@
 - hosts: gitlab
   roles:
+    - role: ssl-certs
+      ssl_cert_dir: /etc/gitlab/certs
     - common
     - gitlab
   become: true
-  pre_tasks:
-    - name: Create SSL certificate directory
-      ansible.builtin.file:
-        path: /etc/gitlab/certs
-        state: directory
-        mode: '0755'
-    - name: Create SSL certificate
-      ansible.builtin.copy:
-        content: "{{ cluster_ssl_certificate }}"
-        dest: /etc/gitlab/certs/fullchain.pem
-        mode: '0644'
-    - name: Create SSL certificate key
-      ansible.builtin.copy:
-        content: "{{ cluster_ssl_certificate_key }}"
-        dest: /etc/gitlab/certs/privkey.pem
-        mode: '0644'
 
 - hosts: gitlab-runner
   roles:
+    - role: ssl-certs
+      ssl_cert_dir: /etc/gitlab-runner/certs
     - common
     - docker
     - gitlab-runner
   become: true
-  pre_tasks:
-    - name: Create SSL certificate directory
-      ansible.builtin.file:
-        path: /etc/gitlab-runner/certs
-        state: directory
-        mode: '0755'
-    - name: Create SSL certificate
-      ansible.builtin.copy:
-        content: "{{ cluster_ssl_certificate }}"
-        dest: /etc/gitlab-runner/certs/fullchain.pem
-        mode: '0644'
-    - name: Create SSL certificate key
-      ansible.builtin.copy:
-        content: "{{ cluster_ssl_certificate_key }}"
-        dest: /etc/gitlab-runner/certs/privkey.pem
-        mode: '0644'
 
 # Run this command on each runner to register it with GitLab:
 

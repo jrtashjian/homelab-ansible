@@ -1,5 +1,0 @@
-certbot_email: ""
-certbot_domain: ""
-
-certbot_dns_linode_key: ""
-certbot_dns_linode_version: "4"

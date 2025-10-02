@@ -56,9 +56,6 @@ smtp_port: {{ op://homelab/smtp_server/SMTP/port number }}
 smtp_user: {{ op://homelab/smtp_server/username }}
 smtp_pass: {{ op://homelab/smtp_server/password }}
 
-certbot_email: {{ op://homelab/linode-certbot-ansible/email }}
-certbot_dns_linode_key: {{ op://homelab/linode-certbot-ansible/credential }}
-
 minio_endpoint: "192.168.10.11:9000"
 minio_access_key_id: {{ op://homelab/minio-admin-user/Access Keys/access key }}
 minio_secret_access_key: {{ op://homelab/minio-admin-user/Access Keys/secret access key }}

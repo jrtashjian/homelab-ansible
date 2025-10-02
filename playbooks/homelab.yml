@@ -22,12 +22,6 @@
     - common
     - minecraft-papermc
 
-- hosts: gitlab
-  roles:
-    - common
-    - certbot
-    - gitlab
-
 - hosts: ldap
   roles:
     - common

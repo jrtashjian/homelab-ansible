@@ -22,6 +22,19 @@ all:
     netbird:
       hosts:
         netbird.jrtashjian.com:
+          ansible_ssh_user: root
+
+    gitlab:
+      hosts:
+        gitlab.int.jrtashjian.com:
+
+    gitlab-runner:
+      hosts:
+        gitlab-runner01.int.jrtashjian.com:
+        gitlab-runner02.int.jrtashjian.com:
+        gitlab-runner03.int.jrtashjian.com:
+        gitlab-runner04.int.jrtashjian.com:
+        gitlab-runner05.int.jrtashjian.com:
 
     minecraft:
       children:

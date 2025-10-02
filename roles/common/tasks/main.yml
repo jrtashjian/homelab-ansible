@@ -1,7 +1,13 @@
 - import_tasks: hostname.yml
   become: true
 
-- name: APT package management configuration
+- name: Update and upgrade apt packages
+  become: true
+  ansible.builtin.apt:
+    update_cache: true
+    upgrade: dist
+
+- name: Install essential packages
   become: true
   ansible.builtin.apt:
     state: present
@@ -12,9 +18,20 @@
       # Enable auto-updates and notifications
       - unattended-upgrades
       - apt-listchanges
+      # System tools
+      - cron
       # Misc tools
       - curl
       - wget
       - htop
       - vim
-    update_cache: true
+
+- name: Remove unused packages
+  become: true
+  ansible.builtin.apt:
+    autoremove: yes
+
+- name: Clean apt cache
+  become: true
+  ansible.builtin.apt:
+    autoclean: yes

@@ -1,5 +1,6 @@
 - name: restart gitlab_runner
   become: true
-  command: gitlab-runner restart
-  register: gitlab_runner_restart
-  failed_when: gitlab_runner_restart.rc != 0 | bool
+  ansible.builtin.systemd:
+    name: gitlab-runner
+    state: restarted
+    daemon_reload: yes

@@ -2,6 +2,14 @@
   ansible.builtin.stat: path=/usr/bin/gitlab-runner
   register: gitlab_runner_file
 
+- name: Check if GitLab Runner repository is already installed.
+  ansible.builtin.stat: path=/etc/apt/sources.list.d/runner_gitlab-runner.list
+  register: gitlab_runner_repo
+
+- name: Set fact for forcing repository installation
+  ansible.builtin.set_fact:
+    gitlab_runner_force_repo_install: "{{ 'gitlab-runner-repo-install' in ansible_run_tags }}"
+
 - name: Install GitLab Runner dependencies
   become: true
   ansible.builtin.apt:
@@ -17,12 +25,16 @@
     url: https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh
     dest: /tmp/script.deb.sh
     validate_certs: true
+  when: not gitlab_runner_repo.stat.exists or gitlab_runner_force_repo_install
+  tags: gitlab-runner-repo-install
 
 - name: Install GitLab Runner repository.
   become: true
   ansible.builtin.command: bash /tmp/script.deb.sh
   environment:
     EXTERNAL_URL: gitlab_external_url
+  when: not gitlab_runner_repo.stat.exists or gitlab_runner_force_repo_install
+  tags: gitlab-runner-repo-install
 
 - name: Install GitLab Runner
   become: true

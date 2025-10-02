@@ -46,7 +46,7 @@ module "gitlab_runner_vms" {
   count     = 5
   cpu       = 6
   memory    = 4096
-  disk_size = 32
+  disk_size = 64
 
   node_name = count.index % 2 == 0 ? "pve-node02" : "pve-node03"
   vm_name   = format("gitlab-runner%02d", count.index + 1)

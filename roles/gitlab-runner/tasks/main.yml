@@ -17,26 +17,32 @@
     url: https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh
     dest: /tmp/script.deb.sh
     validate_certs: true
-  when: not gitlab_runner_file.stat.exists
 
 - name: Install GitLab Runner repository.
   become: true
   ansible.builtin.command: bash /tmp/script.deb.sh
   environment:
     EXTERNAL_URL: gitlab_external_url
-  when: not gitlab_runner_file.stat.exists
 
 - name: Install GitLab Runner
   become: true
   ansible.builtin.package:
     name: "gitlab-runner"
-    state: present
+    state: latest
   async: 600
   poll: 5
-  when: not gitlab_runner_file.stat.exists
-
-- name: Copy GitLab Runner temporary configuration file.
-  template:
-    src: config.toml.j2
-    dest: /tmp/config.toml
   notify: restart gitlab_runner
+
+- name: Copy GitLab Runner configuration file.
+  ansible.builtin.template:
+    src: config.toml.j2
+    dest: /etc/gitlab-runner/config.toml
+  notify: restart gitlab_runner
+
+- name: Create cron job for nightly Docker cleanup
+  become: true
+  ansible.builtin.cron:
+    name: "Docker cleanup"
+    special_time: daily
+    job: "docker system prune -f --volumes"
+    user: root

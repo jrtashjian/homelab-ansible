@@ -43,6 +43,11 @@ gitlab_ldap_servers: |
       'uid' => 'uid',
       'base' => 'ou=people,{{ ldap_base_dn }}',
       'encryption' => 'simple_tls',
+      'tls_options' => {
+        'ssl_version' => 'TLSv1_2',
+        'cert' => '{{cluster_ssl_certificate}}',
+        'key' => '{{cluster_ssl_certificate_key}}',
+      },
       'bind_dn' => 'uid={{ ldap_bind_user }},ou=people,{{ ldap_base_dn }}',
       'password' => '{{ ldap_bind_pass }}',
       'active_directory' => false,

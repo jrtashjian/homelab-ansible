@@ -15,42 +15,6 @@ ldap_bind_pass: "{{ op://homelab/ldap-bind-user/password }}"
 lldap_jwt_secret: "{{ op://homelab/lldap-jwt-secret/password }}"
 lldap_key_seed: "{{ op://homelab/lldap-key-seed/password }}"
 
-# authelia_jwt_secret: "{{ op://homelab/authelia-jwt-secret/password }}"
-# authelia_session_secret: "{{ op://homelab/authelia-session-secret/password }}"
-# authelia_storage_encryption_key: "{{ op://homelab/authelia-storage-encryption-key/password }}"
-# authelia_hmac_secret: "{{ op://homelab/authelia-hmac-secret/password }}"
-
-# authelia_clients:
-#   - id: proxmox
-#     description: Proxmox VE
-#     secret: "{{ op://homelab/authelia-client-proxmox-secret/password }}"
-#     authorization_policy: two_factor
-#     scopes:
-#       - openid
-#       - groups
-#       - email
-#       - profile
-#     redirect_uris:
-#       - https://pve-node01.int.jrtashjian.com:8006
-#       - https://pve-node02.int.jrtashjian.com:8006
-#     userinfo_signing_algorithm: RS256
-#   - id: netbird
-#     description: NetBird VPN
-#     secret: "{{ op://homelab/authelia-client-netbird-secret/password }}"
-#     authorization_policy: two_factor
-#     scopes:
-#       - openid
-#       - groups
-#       - email
-#       - profile
-#       - offline_access
-#     redirect_uris:
-#       - https://netbird.jrtashjian.com/callback
-#       - http://localhost:53000
-#     userinfo_signing_algorithm: RS256
-#     audience:
-#       - netbird
-
 smtp_host: {{ op://homelab/smtp_server/server }}
 smtp_port: {{ op://homelab/smtp_server/SMTP/port number }}
 smtp_user: {{ op://homelab/smtp_server/username }}

@@ -9,6 +9,10 @@ all:
         pve-node02.int.jrtashjian.com:
         pve-node03.int.jrtashjian.com:
 
+    docker:
+      hosts:
+        enshrouded.int.jrtashjian.com:
+
     ldap:
       hosts:
         ldap.int.jrtashjian.com:

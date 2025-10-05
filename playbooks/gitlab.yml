@@ -7,7 +7,6 @@
   become: true
 
 - hosts: gitlab-runner
-  serial: 1
   roles:
     - role: ssl-certs
       ssl_cert_dir: /etc/gitlab-runner/certs

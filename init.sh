@@ -142,9 +142,10 @@ main() {
     install_1password_cli
 
     # Check if 'ansible' is already installed
-    if ! command -v ansible &> /dev/null
-    then
+    if ! command -v ansible &> /dev/null; then
+        log "Installing Ansible..."
         apt install -y ansible
+        success "Ansible installed"
     fi
 
     if $run_all; then

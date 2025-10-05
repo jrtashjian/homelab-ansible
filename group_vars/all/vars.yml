@@ -1,8 +1,6 @@
-op_vault: homelab
-
 domain: "jrtashjian.com"
 domain_internal: "int.{{ domain }}"
 authelia_fqdn: "sso.{{ domain }}"
 
-cluster_ssl_certificate: "{{ lookup('community.general.onepassword_doc', 'int.jrtashjian.com.fullchain', vault=op_vault) }}"
-cluster_ssl_certificate_key: "{{ lookup('community.general.onepassword_doc', 'int.jrtashjian.com.privkey', vault=op_vault) }}"
+cluster_ssl_certificate: "{{ inventory_dir }}/files/fullchain.pem"
+cluster_ssl_certificate_key: "{{ inventory_dir }}/files/privkey.pem"

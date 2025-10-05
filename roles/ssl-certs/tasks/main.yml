@@ -6,12 +6,14 @@
 
 - name: Create SSL certificate
   ansible.builtin.copy:
-    content: "{{ cluster_ssl_certificate }}"
+    src: "{{ cluster_ssl_certificate }}"
     dest: "{{ ssl_cert_dir }}/fullchain.pem"
     mode: '0644'
+    force: true
 
 - name: Create SSL certificate key
   ansible.builtin.copy:
-    content: "{{ cluster_ssl_certificate_key }}"
+    src: "{{ cluster_ssl_certificate_key }}"
     dest: "{{ ssl_cert_dir }}/privkey.pem"
     mode: '0644'
+    force: true

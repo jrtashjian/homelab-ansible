@@ -90,9 +90,14 @@ setup_certs() {
 
 setup_vaults() {
     fetch_1password_item "op://homelab/ansible-user/Credentials/.ansible-vault-password" ".ansible-vault-password"
-    encrypt_vault_file "group_vars/all/vault.yml.example" "group_vars/all/vault.yml"
-    encrypt_vault_file "group_vars/minecraft/vault.yml.example" "group_vars/minecraft/vault.yml"
-    encrypt_vault_file "host_vars/sso.int.jrtashjian.com/vault.yml.example" "host_vars/sso.int.jrtashjian.com/vault.yml"
+    local vault_files=(
+        "group_vars/all/vault.yml"
+        "group_vars/minecraft/vault.yml"
+        "host_vars/sso.int.jrtashjian.com/vault.yml"
+    )
+    for file in "${vault_files[@]}"; do
+        encrypt_vault_file "${file}.example" "$file"
+    done
 }
 
 usage() {

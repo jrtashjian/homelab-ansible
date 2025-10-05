@@ -113,7 +113,7 @@ main() {
     # Default to running everything
     local run_all=true
     local run_certs=false
-    local run_secrets=false
+    local run_vaults=false
 
     while [[ $# -gt 0 ]]; do
         case $1 in
@@ -122,9 +122,9 @@ main() {
                 run_certs=true
                 shift
                 ;;
-            -s|--secrets)
+            -v|--vaults)
                 run_all=false
-                run_secrets=true
+                run_vaults=true
                 shift
                 ;;
             -h|--help)
@@ -151,7 +151,7 @@ main() {
         setup_all
     elif $run_certs; then
         setup_certs
-    elif $run_secrets; then
+    elif $run_vaults; then
         setup_vaults
     fi
 

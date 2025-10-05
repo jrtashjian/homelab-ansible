@@ -2,6 +2,14 @@
   ansible.builtin.stat: path=/usr/bin/gitlab-ctl
   register: gitlab_file
 
+- name: Check if GitLab repository is already installed.
+  ansible.builtin.stat: path=/etc/apt/sources.list.d/gitlab_gitlab-ce.list
+  register: gitlab_repo
+
+- name: Set fact for forcing repository installation
+  ansible.builtin.set_fact:
+    gitlab_force_repo_install: "{{ 'gitlab-repo-install' in ansible_run_tags }}"
+
 - name: Install GitLab dependencies
   become: true
   ansible.builtin.apt:
@@ -17,23 +25,32 @@
     url: https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh
     dest: /tmp/script.deb.sh
     validate_certs: true
-  when: not gitlab_file.stat.exists
+  when: not gitlab_repo.stat.exists or gitlab_force_repo_install
+  tags: gitlab-repo-install
 
 - name: Install GitLab repository.
   become: true
   ansible.builtin.command: bash /tmp/script.deb.sh
   environment:
     EXTERNAL_URL: gitlab_external_url
-  when: not gitlab_file.stat.exists
+  when: not gitlab_repo.stat.exists or gitlab_force_repo_install
+  tags: gitlab-repo-install
 
 - name: Install GitLab
   become: true
   ansible.builtin.package:
     name: "gitlab-ce"
+    state: latest
+  notify: restart gitlab
+
+- name: Upgrade GitLab to specific version
+  become: true
+  ansible.builtin.package:
+    name: "gitlab-ce={{ gitlab_upgrade_version }}"
     state: present
-  async: 600
-  poll: 5
-  when: not gitlab_file.stat.exists
+  notify: restart gitlab
+  when: gitlab_upgrade_version | length > 0
+  tags: gitlab-upgrade
 
 - name: Copy GitLab configuration file.
   become: true

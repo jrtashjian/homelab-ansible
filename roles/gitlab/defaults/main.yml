@@ -11,3 +11,4 @@ gitlab_object_store_connection: ""
 gitlab_ldap_servers: ""
 gitlab_smtp:
 gitlab_registry_storage: ""
+gitlab_upgrade_version: ""

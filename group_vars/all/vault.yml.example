@@ -31,5 +31,25 @@ gitlab_omniauth_providers: |
       app_id: "{{ op://homelab/github-omniauth-provider/username }}",
       app_secret: "{{ op://homelab/github-omniauth-provider/credential }}",
       args: { scope: "user:email" }
+    },
+    {
+      name: 'openid_connect',
+      label: 'sso.jrtashjian.com',
+      args: {
+        name: 'openid_connect',
+        scope: ['openid','profile','email'],
+        response_type: 'code',
+        issuer: 'https://sso.jrtashjian.com/application/o/gitlab/',
+        discovery: true,
+        client_auth_method: 'query',
+        uid_field: 'preferred_username',
+        send_scope_to_token_endpoint: 'true',
+        pkce: true,
+        client_options: {
+          identifier: "{{ op://homelab/gitlab-admin-user/authentik/client_id }}",
+          secret: "{{ op://homelab/gitlab-admin-user/authentik/client_secret }}",
+          redirect_uri: 'https://gitlab.int.jrtashjian.com/users/auth/openid_connect/callback'
+        }
+      }
     }
   ]

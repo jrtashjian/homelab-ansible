@@ -3,7 +3,7 @@
   register: docker_file
 
 - name: Check if Docker repository is already installed.
-  ansible.builtin.stat: path=/etc/apt/sources.list.d/docker.list
+  ansible.builtin.stat: path=/etc/apt/sources.list.d/docker.sources
   register: docker_repo
 
 - name: Set fact for forcing repository installation
@@ -16,24 +16,52 @@
     name:
       - ca-certificates
       - curl
-      - gnupg
-      - lsb-release
     state: present
   when: not docker_file.stat.exists
 
-- name: Import Docker GPG key.
+- name: Create Docker keyrings directory.
   become: true
-  ansible.builtin.apt_key:
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: "0755"
+  when: not docker_repo.stat.exists or docker_force_repo_install
+  tags: docker-repo-install
+
+- name: Download Docker GPG key.
+  become: true
+  ansible.builtin.get_url:
     url: https://download.docker.com/linux/debian/gpg
-    state: present
+    dest: /etc/apt/keyrings/docker.asc
+    mode: "0644"
+  when: not docker_repo.stat.exists or docker_force_repo_install
+  tags: docker-repo-install
+
+- name: Set permissions on Docker GPG key.
+  become: true
+  ansible.builtin.file:
+    path: /etc/apt/keyrings/docker.asc
+    mode: "a+r"
   when: not docker_repo.stat.exists or docker_force_repo_install
   tags: docker-repo-install
 
 - name: Add Docker package source.
   become: true
-  ansible.builtin.apt_repository:
-    repo: deb https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable
-    state: present
+  ansible.builtin.copy:
+    dest: /etc/apt/sources.list.d/docker.sources
+    content: |
+      Types: deb
+      URIs: https://download.docker.com/linux/debian
+      Suites: {{ ansible_distribution_release }}
+      Components: stable
+      Signed-By: /etc/apt/keyrings/docker.asc
+    mode: "0644"
+  when: not docker_repo.stat.exists or docker_force_repo_install
+  tags: docker-repo-install
+
+- name: Update apt cache.
+  become: true
+  ansible.builtin.apt:
     update_cache: true
   when: not docker_repo.stat.exists or docker_force_repo_install
   tags: docker-repo-install

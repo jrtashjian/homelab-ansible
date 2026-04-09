@@ -7,17 +7,36 @@ terraform {
   }
 }
 
+locals {
+  presets = {
+    # Standard configurations.
+    nano           = { cpu = 1, memory = 1024 }
+    small          = { cpu = 1, memory = 2048 }
+    medium         = { cpu = 2, memory = 4096 }
+    large          = { cpu = 4, memory = 8192 }
+    xlarge         = { cpu = 6, memory = 16384 }
+
+    # High Memory configurations.
+    highmem-medium = { cpu = 2, memory = 24576 }
+    highmem-large  = { cpu = 4, memory = 49152 }
+
+    # High CPU configurations.
+    compute-large   = { cpu = 8, memory = 16384 }
+    compute-xlarge  = { cpu = 16, memory = 32768 }
+  }
+}
+
 resource "proxmox_virtual_environment_container" "base_lxc" {
   node_name = var.node_name
   pool_id   = var.pool_id
   tags      = ["terraform"]
 
   cpu {
-    cores = var.cpu
+    cores = local.presets[var.size].cpu
   }
 
   memory {
-    dedicated = var.memory
+    dedicated = local.presets[var.size].memory
   }
 
   disk {

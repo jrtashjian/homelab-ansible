@@ -8,16 +8,15 @@ variable "lxc_name" {
   type        = string
 }
 
-variable "cpu" {
-  description = "The CPU configuration for the LXC"
-  type        = number
-  default     = 2
-}
+variable "size" {
+  description = "The size of the LXC (nano, small, medium, large, xlarge, highmem-medium, highmem-large, compute-large, compute-xlarge)"
+  type        = string
+  default     = "small"
 
-variable "memory" {
-  description = "The memory configuration for the LXC"
-  type        = number
-  default     = 2048
+  validation {
+    condition = contains(["nano", "small", "medium", "large", "xlarge", "highmem-medium", "highmem-large", "compute-large", "compute-xlarge"], var.size)
+    error_message = "Size must be one of: nano, small, medium, large, xlarge, highmem-medium, highmem-large, compute-large, compute-xlarge"
+  }
 }
 
 variable "disk_size" {

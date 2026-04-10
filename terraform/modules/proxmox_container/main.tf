@@ -43,6 +43,16 @@ resource "proxmox_virtual_environment_container" "base_lxc" {
     size         = 8
   }
 
+  dynamic "mount_point" {
+    for_each = var.mount_points
+
+    content {
+      volume = mount_point.value.volume
+      size   = mount_point.value.size
+      path   = mount_point.value.path
+    }
+  }
+
   network_interface {
     name     = "eth0"
     firewall = true

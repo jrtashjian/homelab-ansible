@@ -14,7 +14,7 @@ variable "size" {
   default     = "small"
 
   validation {
-    condition = contains(["nano", "small", "medium", "large", "xlarge", "highmem-medium", "highmem-large", "compute-large", "compute-xlarge"], var.size)
+    condition     = contains(["nano", "small", "medium", "large", "xlarge", "highmem-medium", "highmem-large", "compute-large", "compute-xlarge"], var.size)
     error_message = "Size must be one of: nano, small, medium, large, xlarge, highmem-medium, highmem-large, compute-large, compute-xlarge"
   }
 }
@@ -23,6 +23,16 @@ variable "disk_size" {
   description = "The size of the disk in GB"
   type        = number
   default     = 8
+}
+
+variable "mount_points" {
+  description = "List of additional mount points to create in the LXC"
+  type = list(object({
+    volume = string
+    size   = string
+    path   = string
+  }))
+  default = []
 }
 
 variable "ipv4_address" {

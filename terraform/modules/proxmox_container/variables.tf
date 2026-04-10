@@ -19,12 +19,6 @@ variable "size" {
   }
 }
 
-variable "disk_size" {
-  description = "The size of the disk in GB"
-  type        = number
-  default     = 8
-}
-
 variable "mount_points" {
   description = "List of additional mount points to create in the LXC"
   type = list(object({

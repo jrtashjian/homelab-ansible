@@ -50,7 +50,6 @@ module "lxc" {
 | `node_name`         | string   | -           | Proxmox node name |
 | `lxc_name`          | string   | -           | Hostname of the LXC |
 | `size`              | string   | `"small"`   | Preset size (see list above) |
-| `disk_size`         | number   | `8`         | Root disk size in GB (OS + logs only) |
 | `mount_points`      | list     | `[]`        | Additional volume mounts |
 | `ipv4_address`      | string   | `"dhcp"`    | IPv4 address with CIDR or `"dhcp"` |
 | `ipv4_gateway`      | string   | `""`        | IPv4 gateway (required for static IP) |

@@ -37,12 +37,6 @@ variable "ipv4_gateway" {
   default     = ""
 }
 
-variable "pool_id" {
-  description = "The ID of the pool to add the LXC to"
-  type        = string
-  default     = ""
-}
-
 variable "ansible_pass" {
   description = "Ansible password"
   type        = string

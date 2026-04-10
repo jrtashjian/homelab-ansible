@@ -28,7 +28,6 @@ locals {
 
 resource "proxmox_virtual_environment_container" "base_lxc" {
   node_name = var.node_name
-  pool_id   = var.pool_id
   tags      = ["terraform"]
 
   cpu {

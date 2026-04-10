@@ -28,7 +28,7 @@ module "lxc" {
 
 ## Available Sizes
 
-**Standard (Shared CPU)**
+**Standard**
 - `nano`   → 1 vCPU, 1 GB RAM
 - `small`  → 1 vCPU, 2 GB RAM
 - `medium` → 2 vCPU, 4 GB RAM
